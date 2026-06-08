@@ -709,6 +709,19 @@ body::before {
 /* ---- Alternating section surface ---- */
 .section.alt { background: #fff; }
 
+/* ---- Section background video ---- */
+.section.has-bg-video { overflow: hidden; }
+.section-bg-video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 0; pointer-events: none;
+}
+/* Light wash so dark headings stay readable over the footage */
+.section.has-bg-video::before {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: rgba(255,255,255,0.78);
+}
+.section.has-bg-video > .container { position: relative; z-index: 2; }
+
 /* ---- HERO (purple gradient, no photo) ---- */
 .hero {
   background: radial-gradient(110% 80% at 78% -10%, #3A338F 0%, var(--purple-deep) 48%, var(--purple-ink) 100%);
