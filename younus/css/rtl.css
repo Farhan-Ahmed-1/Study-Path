@@ -1,0 +1,21 @@
+/* =====================================================================
+   RTL overrides — applied when <html dir="rtl"> (Arabic)
+   Most layout uses logical properties (inset-inline, margin-inline,
+   padding-inline, text-align:start/end), so only a few tweaks are needed.
+   ===================================================================== */
+
+[dir="rtl"] body {
+  font-family: "Plus Jakarta Sans", "Segoe UI", "Tahoma", system-ui, sans-serif;
+}
+
+/* Flip directional icons / arrows */
+[dir="rtl"] .country-card .go svg,
+[dir="rtl"] .arrow-ic { transform: scaleX(-1); }
+
+/* Slightly larger line-height suits Arabic script */
+[dir="rtl"] { line-height: 1.8; }
+[dir="rtl"] .hero h1,
+[dir="rtl"] .section-title,
+[dir="rtl"] .page-head h1 { letter-spacing: 0; }
+
+[dir="rtl"] .footer-bottom { direction: rtl; }

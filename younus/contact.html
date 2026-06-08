@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- single fixed cream/purple theme -->
+  <title>Contact — Prime Education Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/rtl.css" />
+  <link rel="icon" type="image/png" href="logo_prime.png" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div id="nav-root"></div>
+
+  <section class="page-head">
+    <div class="container">
+      <h1 data-i18n="contactPage.title"></h1>
+      <p data-i18n="contactPage.lead"></p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:24px">
+    <div class="container contact-grid">
+      <!-- Form -->
+      <form class="card" id="contact-form" novalidate>
+        <h3 style="font-size:1.4rem;font-weight:750;margin-bottom:20px" data-i18n="contactPage.formTitle"></h3>
+        <div class="field">
+          <label data-i18n="contactPage.name"></label>
+          <input class="input" id="c-name" required data-i18n-attr="placeholder:contactPage.namePh" />
+        </div>
+        <div class="field">
+          <label data-i18n="contactPage.email"></label>
+          <input class="input" id="c-email" type="email" required data-i18n-attr="placeholder:contactPage.emailPh" />
+        </div>
+        <div class="field">
+          <label data-i18n="contactPage.subject"></label>
+          <input class="input" id="c-subject" data-i18n-attr="placeholder:contactPage.subjectPh" />
+        </div>
+        <div class="field">
+          <label data-i18n="contactPage.message"></label>
+          <textarea class="textarea" id="c-message" required data-i18n-attr="placeholder:contactPage.messagePh"></textarea>
+        </div>
+        <div class="flex gap wrap">
+          <button class="btn btn-primary" id="send-email" data-i18n="contactPage.send" style="flex:1"></button>
+          <button class="btn btn-whatsapp" id="send-wa" data-i18n="contactPage.whatsapp" style="flex:1"></button>
+        </div>
+      </form>
+
+      <!-- Info -->
+      <div>
+        <h3 style="font-size:1.4rem;font-weight:750;margin-bottom:20px" data-i18n="contactPage.infoTitle"></h3>
+        <div class="contact-info">
+          <div class="contact-item">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M3 6l9 7 9-7"/></svg></span>
+            <div><b data-i18n="contactPage.emailLabel"></b><span><a id="ci-email" href="#"></a></span></div>
+          </div>
+          <div class="contact-item">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 11.9A8 8 0 016.6 18L3 19l1-3.5A8 8 0 1120 11.9z"/></svg></span>
+            <div><b data-i18n="contactPage.waLabel"></b><span><a id="ci-wa" href="#" target="_blank"></a></span></div>
+          </div>
+          <div class="contact-item">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <div><b data-i18n="contactPage.hoursLabel"></b><span data-i18n="contactPage.hoursValue"></span></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:24px">
+          <h4 style="margin-bottom:14px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.1em;font-size:.85rem" data-i18n="contactPage.followLabel"></h4>
+          <div class="socials" style="margin-top:0">
+            <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="19" height="19"><rect x="2" y="2" width="20" height="20" rx="6"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" width="19" height="19"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H7v3h3v7h3v-7h3l1-3h-4v-2c0-.6.4-1 1-1z"/></svg></a>
+            <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor" width="19" height="19"><path d="M16 3c.3 2.3 1.9 4 4 4.2V10c-1.5 0-2.9-.5-4-1.3V15a6 6 0 11-6-6c.3 0 .7 0 1 .1V12a3 3 0 102 2.8V3h3z"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-root"></div>
+
+  <script src="i18n/en.js"></script>
+  <script src="i18n/ar.js"></script>
+  <script src="i18n/fr.js"></script>
+  <script src="i18n/es.js"></script>
+  <script src="i18n/hi.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/contact.js"></script>
+  <script src="js/components.js"></script>
+</body>
+</html>

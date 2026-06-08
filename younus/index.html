@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prime Education Group — We prepare you here, and we place you there.</title>
+  <meta name="description" content="Prime Education Group prepares you here and places you there — language coaching, university placement, scholarships, visas and on-the-ground support abroad." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/rtl.css" />
+  <link rel="icon" type="image/png" href="logo_prime.png" />
+</head>
+<body>
+  <div id="nav-root"></div>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow" data-i18n="home.hero.badge"></span>
+          <h1 data-i18n="home.hero.title"></h1>
+          <p class="lead" data-i18n="home.hero.lead"></p>
+          <div class="hero-cta">
+            <button class="btn btn-gold btn-lg" onclick="openModal()" data-i18n="home.hero.cta"></button>
+            <a href="#land" class="btn btn-ghost btn-lg" data-i18n="home.hero.cta2"></a>
+          </div>
+          <div class="hero-doors">
+            <div class="door-mini" onclick="location.href='assessment.html'">
+              <div class="t" data-i18n="home.hero.door1t"></div>
+              <div class="s" data-i18n="home.hero.door1s"></div>
+            </div>
+            <div class="door-mini" onclick="openModal()">
+              <div class="t" data-i18n="home.hero.door2t"></div>
+              <div class="s" data-i18n="home.hero.door2s"></div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-card">
+          <span class="badge" data-i18n="home.hero.cardBadge"></span>
+          <h3><a href="https://newcastleedugroup.com/" target="_blank" rel="noopener" style="color:inherit" data-i18n="home.hero.cardTitle"></a></h3>
+          <p data-i18n="home.hero.cardLead"></p>
+          <div class="ck"><b>✓</b><span data-i18n="home.hero.ck1"></span></div>
+          <div class="ck"><b>✓</b><span data-i18n="home.hero.ck2"></span></div>
+          <div class="ck"><b>✓</b><span data-i18n="home.hero.ck3"></span></div>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div><div class="n" data-i18n="home.hero.stat1n"></div><div class="l" data-i18n="home.hero.stat1l"></div></div>
+        <div><div class="n" data-i18n="home.hero.stat2n"></div><div class="l" data-i18n="home.hero.stat2l"></div></div>
+        <div><div class="n" data-i18n="home.hero.stat3n"></div><div class="l" data-i18n="home.hero.stat3l"></div></div>
+        <div><div class="n" data-i18n="home.hero.stat4n"></div><div class="l" data-i18n="home.hero.stat4l"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TWO DOORS ===================== -->
+  <section class="section alt" id="doors">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="home.doors.eyebrow"></span>
+        <h2 class="section-title" data-i18n="home.doors.title"></h2>
+        <p class="section-lead" data-i18n="home.doors.lead"></p>
+      </div>
+      <div class="doors">
+        <div class="door g reveal">
+          <div>
+            <span class="tag" data-i18n="home.doors.d1tag"></span>
+            <h3 data-i18n="home.doors.d1title"></h3>
+            <p data-i18n="home.doors.d1desc"></p>
+            <ul>
+              <li data-i18n="home.doors.d1c1"></li><li data-i18n="home.doors.d1c2"></li>
+              <li data-i18n="home.doors.d1c3"></li><li data-i18n="home.doors.d1c4"></li>
+            </ul>
+            <span class="go" onclick="location.href='assessment.html'" data-i18n="home.doors.d1cta"></span>
+          </div>
+        </div>
+        <div class="door a reveal">
+          <div>
+            <span class="tag" data-i18n="home.doors.d2tag"></span>
+            <h3 data-i18n="home.doors.d2title"></h3>
+            <p data-i18n="home.doors.d2desc"></p>
+            <ul>
+              <li data-i18n="home.doors.d2c1"></li><li data-i18n="home.doors.d2c2"></li>
+              <li data-i18n="home.doors.d2c3"></li><li data-i18n="home.doors.d2c4"></li>
+            </ul>
+            <span class="go" onclick="openModal()" data-i18n="home.doors.d2cta"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FUNNEL ===================== -->
+  <section class="section">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="home.funnel.eyebrow"></span>
+        <h2 class="section-title" data-i18n="home.funnel.title"></h2>
+        <p class="section-lead" data-i18n="home.funnel.lead"></p>
+      </div>
+      <div class="funnel">
+        <div class="fstep reveal"><div class="n">1</div><h4 data-i18n="home.funnel.s1t"></h4><p data-i18n="home.funnel.s1d"></p></div>
+        <div class="fstep reveal"><div class="n">2</div><h4 data-i18n="home.funnel.s2t"></h4><p data-i18n="home.funnel.s2d"></p></div>
+        <div class="fstep reveal"><div class="n">3</div><h4 data-i18n="home.funnel.s3t"></h4><p data-i18n="home.funnel.s3d"></p></div>
+        <div class="fstep reveal"><div class="n">4</div><h4 data-i18n="home.funnel.s4t"></h4><p data-i18n="home.funnel.s4d"></p></div>
+        <div class="fstep reveal"><div class="n">5</div><h4 data-i18n="home.funnel.s5t"></h4><p data-i18n="home.funnel.s5d"></p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== YOU WON'T LAND ALONE ===================== -->
+  <section class="section land" id="land">
+    <div class="container">
+      <div class="land-grid">
+        <div class="reveal">
+          <span class="eyebrow" data-i18n="home.land.eyebrow"></span>
+          <h2 data-i18n="home.land.title"></h2>
+          <p class="lead" data-i18n="home.land.lead"></p>
+          <button class="btn btn-gold" style="margin-top:24px" onclick="openModal()" data-i18n="home.land.cta"></button>
+        </div>
+        <div class="land-feats reveal">
+          <div class="lf"><div class="ic">A</div><h4 data-i18n="home.land.f1t"></h4><p data-i18n="home.land.f1d"></p></div>
+          <div class="lf"><div class="ic">★</div><h4 data-i18n="home.land.f2t"></h4><p data-i18n="home.land.f2d"></p></div>
+          <div class="lf"><div class="ic">+</div><h4 data-i18n="home.land.f3t"></h4><p data-i18n="home.land.f3d"></p></div>
+          <div class="lf"><div class="ic">✓</div><h4 data-i18n="home.land.f4t"></h4><p data-i18n="home.land.f4d"></p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DESTINATIONS ===================== -->
+  <section class="section alt">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="home.countries.eyebrow"></span>
+        <h2 class="section-title" data-i18n="home.countries.title"></h2>
+        <p class="section-lead" data-i18n="home.countries.lead"></p>
+      </div>
+      <div class="grid grid-3 mt-4" id="home-countries"></div>
+      <div class="center mt-4"><a href="countries.html" class="btn btn-primary" data-i18n="home.countries.all"></a></div>
+    </div>
+  </section>
+
+  <!-- ===================== SCHOLARSHIPS ===================== -->
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="schol reveal">
+        <div>
+          <div class="big" data-i18n="home.schol.big"></div>
+          <p data-i18n="home.schol.lead"></p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal()" data-i18n="home.schol.cta"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== STORIES ===================== -->
+  <section class="section alt">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="home.testimonials.eyebrow"></span>
+        <h2 class="section-title" data-i18n="home.testimonials.title"></h2>
+        <p class="section-lead" data-i18n="home.testimonials.lead"></p>
+      </div>
+      <div class="stories">
+        <div class="story reveal">
+          <div class="q" data-i18n="home.testimonials.t1"></div>
+          <div class="who"><div class="av">A</div><div><div class="nm" data-i18n="home.testimonials.t1n"></div><div class="dt" data-i18n="home.testimonials.t1r"></div></div></div>
+        </div>
+        <div class="story reveal">
+          <div class="q" data-i18n="home.testimonials.t2"></div>
+          <div class="who"><div class="av">S</div><div><div class="nm" data-i18n="home.testimonials.t2n"></div><div class="dt" data-i18n="home.testimonials.t2r"></div></div></div>
+        </div>
+        <div class="story reveal">
+          <div class="q" data-i18n="home.testimonials.t3"></div>
+          <div class="who"><div class="av">Y</div><div><div class="nm" data-i18n="home.testimonials.t3n"></div><div class="dt" data-i18n="home.testimonials.t3r"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FINAL CTA ===================== -->
+  <section class="final" id="about">
+    <div class="container">
+      <span class="eyebrow" data-i18n="home.final.eyebrow"></span>
+      <h2 data-i18n="home.final.title"></h2>
+      <p data-i18n="home.final.lead"></p>
+      <button class="btn btn-gold btn-lg" style="margin-top:28px" onclick="openModal()" data-i18n="home.final.cta"></button>
+      <div class="sm" data-i18n="home.final.sm"></div>
+    </div>
+  </section>
+
+  <div id="footer-root"></div>
+
+  <!-- Scripts: translations → engine → components → page -->
+  <script src="i18n/en.js"></script>
+  <script src="i18n/ar.js"></script>
+  <script src="i18n/fr.js"></script>
+  <script src="i18n/es.js"></script>
+  <script src="i18n/hi.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/countries.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    // Render the destination cards on the home page once components are ready.
+    window.addEventListener("components:ready", function () {
+      if (window.Countries) window.Countries.renderHome("home-countries", 6);
+    });
+    window.addEventListener("languagechange", function () {
+      if (window.Countries) window.Countries.renderHome("home-countries", 6);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# Large media files (too big for GitHub's 100MB limit)
+*.mp4
+*.mov
+*.avi
+*.mkv

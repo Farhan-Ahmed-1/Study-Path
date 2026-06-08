@@ -1,0 +1,281 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<title>Prime' New Generation — System Design</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+<style>
+ body{font-family:'Calibri',sans-serif;font-size:11pt;color:#1a1a1a;line-height:1.5;}
+ h1{font-size:24pt;color:#02122b;border-bottom:3px solid #3b6fff;padding-bottom:6px;}
+ h2{font-size:17pt;color:#02122b;margin-top:24px;border-bottom:1px solid #ccc;padding-bottom:3px;}
+ h3{font-size:13pt;color:#3b6fff;margin-top:16px;}
+ table{border-collapse:collapse;width:100%;margin:10px 0;}
+ th{background:#02122b;color:#fff;text-align:left;padding:6px 8px;font-size:10pt;}
+ td{border:1px solid #cccccc;padding:6px 8px;font-size:10pt;vertical-align:top;}
+ tr:nth-child(even) td{background:#f4f7ff;}
+ pre{background:#0f1b33;color:#d6e2ff;padding:12px;font-family:'Consolas',monospace;font-size:9pt;white-space:pre;}
+ code{background:#eef2ff;color:#1a3a8f;font-family:'Consolas',monospace;font-size:9.5pt;padding:1px 3px;}
+ .lead{background:#eef2ff;border-left:4px solid #3b6fff;padding:10px 14px;font-style:italic;}
+ ul{margin:6px 0 6px 0;}
+ li{margin:3px 0;}
+ .tag{display:inline-block;background:#3b6fff;color:#fff;border-radius:4px;padding:1px 7px;font-size:9pt;}
+</style>
+</head>
+<body>
+
+<h1>Prime' New Generation — System Design</h1>
+
+<p class="lead"><b>What this is:</b> Prime' New Generation is a web app that helps students plan studying abroad.
+It lets them take a readiness <b>assessment</b>, compare <b>countries</b>, read a community <b>forum</b>,
+and <b>contact</b> advisors — in <b>5 languages</b> (English, Arabic, French, Spanish, Hindi) with
+light/dark themes. This document explains the system <b>as it is today</b> (a static front-end), then
+lays out a <b>phased roadmap</b> to grow it into a full production product.</p>
+
+<h2>1. The big picture (1-minute version)</h2>
+<p>Today Prime' New Generation is a <b>100% client-side static website</b>. There is <b>no backend, no database,
+no server code</b>. Everything runs in the visitor's browser. Data (countries, forum threads,
+translations) is hard-coded in JavaScript files. The assessment result is delivered by opening a
+<b>WhatsApp link</b>, and the contact form opens the user's email client (<code>mailto</code>).</p>
+
+<pre>            +---------------------------------------------+
+            |                 BROWSER                     |
+            |                                             |
+   User --> |  HTML pages  ->  JS modules  ->  rendered UI|
+            |   (index,        (i18n,                     |
+            |    countries,     components,               |
+            |    assessment,    countries,               |
+            |    forum,         assessment,               |
+            |    contact)       forum, contact)           |
+            |                                             |
+            |  localStorage: theme + language preference  |
+            +---------------+-----------------------------+
+                            |  (only outbound action today)
+                            v
+                  WhatsApp link  /  mailto email</pre>
+
+<p><b>Why this design?</b> It is cheap, fast, and needs zero servers — perfect for a launch/MVP. The
+trade-off: no accounts, no saved data, no real forum, and content edits require a developer. The
+roadmap (Section 6) addresses each of those.</p>
+
+<h2>2. Current architecture</h2>
+
+<h3>2.1 Technology stack</h3>
+<table>
+<tr><th>Layer</th><th>Technology</th><th>Notes</th></tr>
+<tr><td>Markup</td><td>Plain HTML5, one file per page</td><td>No framework</td></tr>
+<tr><td>Styling</td><td>Hand-written CSS (styles.css, rtl.css)</td><td>CSS variables for theming; RTL file for Arabic</td></tr>
+<tr><td>Logic</td><td>Vanilla JavaScript (IIFE modules on window.*)</td><td>No build step, no bundler</td></tr>
+<tr><td>Fonts</td><td>Google Fonts (Plus Jakarta Sans)</td><td>Loaded via CDN</td></tr>
+<tr><td>State</td><td>localStorage</td><td>Stores theme + chosen language only</td></tr>
+<tr><td>Hosting</td><td>Static file host (any)</td><td>GitHub Pages, Netlify, Vercel, S3</td></tr>
+</table>
+
+<h3>2.2 File / folder map</h3>
+<pre>younus/
++-- index.html             # Home / landing page
++-- countries.html         # Grid of all destinations
++-- country-details.html   # Single-country detail view
++-- assessment.html        # 13-step readiness wizard
++-- forum.html             # Community threads (mock, display-only)
++-- contact.html           # Contact form (mailto)
++-- travel video.mp4       # Hero background video
+|
++-- css/
+|   +-- styles.css         # All component + layout styles, theme variables
+|   +-- rtl.css            # Right-to-left overrides for Arabic
+|
++-- i18n/                  # Translation dictionaries (one file per language)
+|   +-- en.js  ar.js  fr.js  es.js  hi.js
+|
++-- js/
+    +-- i18n.js            # Translation ENGINE (reads dictionaries, swaps text)
+    +-- components.js      # Shared navbar + footer + theme + menu (every page)
+    +-- countries.js       # Country DATA + rendering
+    +-- assessment.js      # 13-step wizard + scoring + WhatsApp result
+    +-- forum.js           # Mock threads + category filter
+    +-- contact.js         # Contact form handling (mailto)</pre>
+
+<h3>2.3 How the pieces talk to each other</h3>
+<p>The app uses a <b>simple global-object pattern</b> instead of imports. Each JS file wraps itself in
+an IIFE and exposes one object on <code>window</code> — e.g. <code>window.I18N</code>,
+<code>window.Countries</code>, <code>window.SITE</code>. Pages load scripts in a fixed order so
+dependencies exist before they are used: dictionaries &rarr; engine &rarr; shared UI &rarr; page logic.</p>
+<p>Coordination happens through <b>custom DOM events</b>:</p>
+<ul>
+<li><code>components:ready</code> — fired after navbar/footer are injected. Pages wait for this before rendering their own content.</li>
+<li><code>languagechange</code> — fired when the user switches language. Every module that shows text re-renders.</li>
+</ul>
+
+<h2>3. How each part works, step by step</h2>
+
+<h3>3.1 Internationalization (i18n) — the heart of the app</h3>
+<p><b>Goal:</b> the same page shows in 5 languages and flips to right-to-left for Arabic, without reloading.</p>
+<ol>
+<li><b>Dictionaries</b> live in <code>i18n/*.js</code> — nested objects of keys &rarr; translated strings (e.g. <code>home.hero.title</code>). One file per language.</li>
+<li>On load, <b>js/i18n.js (the engine)</b> reads the saved language from localStorage (default English) or guesses from the browser.</li>
+<li>The engine scans the DOM for every element with a <b>data-i18n="some.key"</b> attribute and fills its text from the active dictionary.</li>
+<li>It sets <code>&lt;html lang&gt;</code> and <code>dir="ltr|rtl"</code>. For Arabic, <code>dir="rtl"</code> activates rtl.css.</li>
+<li>When the user picks a new language, the engine updates localStorage, re-translates the DOM, and <b>fires languagechange</b> so data-driven sections re-render.</li>
+</ol>
+<p><b>Localized data fields</b> use a per-language map, e.g. <code>{ en: "Southern Europe", ar: "...", fr: ... }</code>. A helper <code>L(field)</code> picks the current language and falls back to English.</p>
+
+<h3>3.2 Shared components (navbar, footer, theme) — components.js</h3>
+<ul>
+<li>Injects the navbar/footer into placeholder divs on every page (no copy-paste).</li>
+<li>Holds <b>site config</b> in one place — brand, WhatsApp number, email, social links. <b>This is the single spot to edit contact details.</b></li>
+<li>Wires the <b>light/dark theme</b> toggle, persisted under <code>Prime' New Generation_theme</code>. A tiny inline head script applies the saved theme before paint to avoid a flash.</li>
+<li>Builds the mobile menu and scroll-reveal animations; fires <b>components:ready</b> when done.</li>
+</ul>
+
+<h3>3.3 Countries — countries.js</h3>
+<p>A hard-coded <code>DATA</code> array; each entry has id, flag, tuition/living costs, proof-of-funds
+amount, intakes, work rules, universities, and localized desc/notes. Three render functions:
+home strip (3 cards), the full grid, and the detail view (reads <code>?id=spain</code> from the URL).
+Re-renders on language change.</p>
+
+<h3>3.4 Assessment — assessment.js (most complex feature)</h3>
+<p>A <b>13-step wizard</b> producing a "readiness score" sent to an advisor over WhatsApp.</p>
+<ol>
+<li><code>STEPS</code> describes each question. Types: basic (name/age/phone), year, and options (multiple choice).</li>
+<li>Each option carries a <b>score s (0 to 1)</b>; each question carries a <b>weight w</b> (e.g. "Can you prove the funds?" has w=3, the most important; cosmetic questions have w=0.5).</li>
+<li>Answers are kept <b>in memory</b> only — a refresh loses progress.</li>
+<li>The wizard renders one step at a time with a progress bar; Back/Next navigate.</li>
+<li>It computes a <b>weighted average</b>: score = &Sigma;(s &times; w) / &Sigma;(w), scaled to a percentage, shown in a circular ring.</li>
+<li>The result + answers are formatted into a message opened as a <b>WhatsApp link</b> for follow-up.</li>
+</ol>
+
+<h3>3.5 Forum — forum.js</h3>
+<p>A <b>display-only mock</b>: hard-coded threads with author, category, reply/view counts, localized
+title/excerpt, and a category filter. No posting, persistence, or real users yet — a visual preview of a future feature.</p>
+
+<h3>3.6 Contact — contact.js</h3>
+<p>A form that validates input and opens the user's email client via <code>mailto</code> (no server receives it).</p>
+
+<h2>4. Data model</h2>
+<p>Today "data" = JavaScript objects in source files. As a backend is added (Phase 2+), these become
+database tables. <code>{lang}</code> marks a field stored per-language.</p>
+<table>
+<tr><th>Country</th><th>Assessment (submission)</th><th>ForumThread</th><th>User (Phase 2)</th></tr>
+<tr>
+<td>id (PK)<br>flag, name<br>region {lang}<br>tuition, living, proof<br>langs<br>intake {lang}<br>work {lang}<br>unis []<br>desc {lang}<br>notes {lang}</td>
+<td>id (PK)<br>fullName, age, phone<br>answers (JSON q2..q13)<br>score (0-100)<br>createdAt</td>
+<td>id (PK)<br>author / userId (FK)<br>category<br>title {lang}<br>excerpt {lang}<br>replies, views<br>createdAt<br>&lt; ForumReply (id, body, userId, createdAt)</td>
+<td>id (PK)<br>email, name<br>locale, role<br>createdAt</td>
+</tr>
+</table>
+
+<h2>5. Key user flows</h2>
+<h3>A) Loading any page</h3>
+<pre>page.html requested
+ -> head inline script applies saved theme (no flash)
+ -> dictionaries load -> i18n.js translates all [data-i18n] elements
+ -> countries.js loads data
+ -> components.js injects navbar+footer -> fires "components:ready"
+ -> page script renders its dynamic content (e.g. 3 country cards)</pre>
+<h3>B) Switching language</h3>
+<pre>User clicks language in navbar
+ -> i18n.js saves choice to localStorage
+ -> re-translates every [data-i18n] element
+ -> sets &lt;html dir&gt; (rtl for Arabic -> rtl.css applies)
+ -> fires "languagechange" -> countries/forum/assessment re-render</pre>
+<h3>C) Taking the assessment</h3>
+<pre>Start -> Q1 (basic info) -> Q2..Q13 (scored options)
+ -> each answer stored in memory
+ -> on finish: score = sum(s*w)/sum(w) * 100  -> shown in ring
+ -> "Send to advisor" -> opens WhatsApp with score + answers</pre>
+
+<h2>6. Phased roadmap</h2>
+<p>The recommended path from today's static MVP to a robust product. Each phase is <b>shippable on its
+own</b> and adds one layer of capability. Each phase assumes the previous one.</p>
+
+<h3>Phase 0 — Hardening the current static site (days)</h3>
+<ul>
+<li><b>SEO &amp; sharing:</b> per-page titles/meta, Open Graph tags, sitemap.xml, robots.txt, favicons.</li>
+<li><b>Performance:</b> compress the large autoplay hero video, lazy-load offscreen images, preconnect/self-host fonts.</li>
+<li><b>Accessibility:</b> alt text, focus states, contrast check, full keyboard navigation of the wizard.</li>
+<li><b>Analytics &amp; consent:</b> privacy-friendly analytics (e.g. Plausible) + a cookie/consent notice.</li>
+<li><b>Quality gates:</b> Prettier + ESLint + a GitHub Action that lints on every push.</li>
+</ul>
+<p><b>Exit criteria:</b> Lighthouse &ge; 90 across the board; site indexed; one-click deploys.</p>
+
+<h3>Phase 1 — Build tooling &amp; content structure (1–2 weeks)</h3>
+<ul>
+<li><b>Introduce a build step / framework:</b> Vite + vanilla JS (lighter) or Astro / SvelteKit (fuller, still static-friendly).</li>
+<li><b>Externalize content</b> to JSON/Markdown so non-developers can edit it, ideally via a Git-based CMS (Decap/Netlify CMS or Sanity).</li>
+<li><b>Componentize</b> navbar/footer/cards as real components instead of string injection.</li>
+</ul>
+<p><b>Exit criteria:</b> editors change a country's tuition without touching code; one command builds and deploys.</p>
+
+<h3>Phase 2 — Backend, accounts &amp; persistence (3–5 weeks)</h3>
+<ul>
+<li><b>Pick a backend:</b> a BaaS (Supabase/Firebase) for speed, or Node/Express / Next.js API routes on PostgreSQL for control.</li>
+<li><b>Authentication:</b> email magic-link / Google sign-in; store the User table.</li>
+<li><b>Persist assessments</b> server-side instead of only firing a WhatsApp link; users revisit scores, advisors get a dashboard.</li>
+<li><b>Contact &rarr; real inbox:</b> a server endpoint that stores the message and emails the team (Resend/SendGrid), with rate limiting + captcha.</li>
+<li><b>Security baseline:</b> input validation, HTTPS only, secrets in env vars, least-privilege DB, row-level security.</li>
+</ul>
+<p><b>Exit criteria:</b> a user creates an account, takes the assessment, sees it saved next visit; the team reliably receives contact submissions.</p>
+
+<h3>Phase 3 — Real community forum (3–4 weeks)</h3>
+<ul>
+<li><b>CRUD threads &amp; replies</b> backed by the DB.</li>
+<li><b>Moderation:</b> report button, admin queue, banned-word filter, rate limiting.</li>
+<li><b>Engagement:</b> likes, sorting (new/top), search, email notifications on replies.</li>
+<li><b>Trust &amp; safety:</b> spam detection, profanity filtering, GDPR-compliant handling.</li>
+</ul>
+<p><b>Exit criteria:</b> authenticated users post, reply, search; moderators act on reports.</p>
+
+<h3>Phase 4 — Advisor workflow &amp; CRM (parallel, 2–4 weeks)</h3>
+<ul>
+<li><b>Advisor dashboard:</b> submissions sorted by score/recency with status (new &rarr; contacted &rarr; enrolled).</li>
+<li><b>Lead routing &amp; WhatsApp Business API</b> for templated, trackable replies.</li>
+<li><b>Document checklist per country</b> so students track their application (passport, proof of funds, acceptance letter).</li>
+</ul>
+<p><b>Exit criteria:</b> every assessment becomes a trackable lead worked end-to-end.</p>
+
+<h3>Phase 5 — Scale, observability, automation (ongoing)</h3>
+<ul>
+<li><b>CI/CD:</b> unit tests for scoring, end-to-end with Playwright, preview deploys per PR.</li>
+<li><b>Observability:</b> error tracking (Sentry), uptime monitoring, structured logs, dashboards.</li>
+<li><b>Caching/CDN</b> for static assets and country pages; cache API responses.</li>
+<li><b>i18n at scale:</b> a translation platform (Locize/Crowdin) + automated missing-key checks.</li>
+<li><b>Data &amp; ML (optional):</b> use accumulated assessments to refine scoring weights and recommend best-fit countries.</li>
+</ul>
+<p><b>Exit criteria:</b> confident frequent releases; problems caught before users report them.</p>
+
+<h3>Roadmap at a glance</h3>
+<table>
+<tr><th>Phase</th><th>Theme</th><th>Adds</th><th>Still static?</th></tr>
+<tr><td>0</td><td>Hardening</td><td>SEO, perf, a11y, analytics</td><td>Yes</td></tr>
+<tr><td>1</td><td>Tooling &amp; content</td><td>Build step, CMS, components</td><td>Yes</td></tr>
+<tr><td>2</td><td>Backend &amp; accounts</td><td>DB, auth, saved assessments, real contact</td><td>No (server added)</td></tr>
+<tr><td>3</td><td>Forum</td><td>Real threads, moderation</td><td>No</td></tr>
+<tr><td>4</td><td>Advisor/CRM</td><td>Dashboard, lead tracking, WhatsApp API</td><td>No</td></tr>
+<tr><td>5</td><td>Scale</td><td>CI/CD, monitoring, CDN, ML</td><td>No</td></tr>
+</table>
+
+<h2>7. Non-functional requirements</h2>
+<table>
+<tr><th>Area</th><th>Target</th></tr>
+<tr><td>Performance</td><td>First load &lt; 2.5s on 4G; Lighthouse &ge; 90. Biggest current risk: the hero video size.</td></tr>
+<tr><td>Accessibility</td><td>WCAG 2.1 AA; full keyboard support; RTL parity for Arabic.</td></tr>
+<tr><td>i18n</td><td>5 languages stay in sync; no missing keys; numbers/dates localized.</td></tr>
+<tr><td>Security</td><td>(Phase 2+) HTTPS only, validated inputs, secrets in env, rate limiting, GDPR consent.</td></tr>
+<tr><td>Privacy</td><td>Assessment collects name/age/phone — needs a privacy policy and consent before storing.</td></tr>
+<tr><td>SEO</td><td>Indexable pages, sitemap, structured data for country pages.</td></tr>
+<tr><td>Reliability</td><td>(Phase 5) 99.9% uptime target; error budget tracked.</td></tr>
+</table>
+
+<h2>8. Risks &amp; decisions</h2>
+<ul>
+<li><b>No persistence today.</b> Assessment progress/results vanish on refresh. Accepted for MVP; fixed in Phase 2.</li>
+<li><b>Hard-coded content.</b> Every country/translation edit needs a developer. Fixed in Phase 1 (CMS).</li>
+<li><b>WhatsApp link as the "backend."</b> Works for a small team but isn't trackable or reliable at scale. Upgraded to WhatsApp Business API in Phase 4.</li>
+<li><b>Sensitive data over mailto/WhatsApp.</b> Collecting phone numbers without a stored consent record is a privacy risk. Add a consent checkbox now and a secured store in Phase 2.</li>
+<li><b>Script-order fragility.</b> The global-window + ordered-script approach breaks if files are reordered. Removed by the build step in Phase 1.</li>
+<li><b>Large autoplay video.</b> Hurts mobile load and data usage. Compress / add a poster image in Phase 0.</li>
+</ul>
+
+<p style="margin-top:24px;color:#666;font-size:9pt"><i>Document owner: Prime' New Generation team. Keep this updated as phases ship — move completed items into a "Done" note and adjust the roadmap table.</i></p>
+
+</body>
+</html>
