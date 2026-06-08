@@ -24,6 +24,7 @@
     { href: "index.html", key: "nav.home" },
     { href: "countries.html", key: "nav.countries" },
     { href: "assessment.html", key: "nav.assessment" },
+    { href: "support.html", key: "nav.support" },
     { href: "forum.html", key: "nav.forum" },
     { href: "contact.html", key: "nav.contact" },
   ];
