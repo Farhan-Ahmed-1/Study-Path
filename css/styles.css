@@ -722,12 +722,44 @@ body::before {
 }
 .section.has-bg-video > .container { position: relative; z-index: 2; }
 
+/* ---- Section background map (faded world-map watermark) ---- */
+.section.has-bg-map {
+  position: relative; overflow: hidden; isolation: isolate;
+  background-color: #fff;
+  background-image:
+    /* faint brand-purple tint keeps the map on-theme rather than a stock photo */
+    linear-gradient(0deg, rgba(88,82,214,0.06), rgba(88,82,214,0.06)),
+    /* soft white→cream wash fades the map to a watermark so cards stay crisp */
+    radial-gradient(120% 95% at 50% 0%,
+      rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.90) 55%, rgba(250,246,236,0.97) 100%),
+    url("../Map.jpg");
+  background-size: cover, cover, cover;
+  background-position: center, center, center;
+  background-repeat: no-repeat;
+}
+.section.has-bg-map > .container { position: relative; z-index: 1; }
+@media (hover: hover) and (min-width: 881px) {
+  .section.has-bg-map { background-attachment: scroll, scroll, fixed; }
+}
+
 /* ---- HERO (purple gradient, no photo) ---- */
 .hero {
-  background: radial-gradient(110% 80% at 78% -10%, #3A338F 0%, var(--purple-deep) 48%, var(--purple-ink) 100%);
+  background-color: var(--purple-deep); /* on-brand fallback before image loads / if it 404s */
+  background-image:
+    radial-gradient(120% 90% at 78% -10%,
+      rgba(58, 51, 143, 0.90) 0%, rgba(33, 28, 88, 0.95) 48%, rgba(22, 18, 59, 0.98) 100%),
+    url("../class.jpg");
+  background-size: cover, cover;
+  background-position: center, center 35%;
+  background-repeat: no-repeat;
+  /* heavy single-hue gradient × photo maps the photo's tones into a brand-purple duotone */
+  background-blend-mode: multiply, normal;
   padding-block: clamp(56px, 8vw, 90px) 0; color: #fff;
 }
 .hero::before { display: none; }
+@media (hover: hover) and (min-width: 881px) {
+  .hero { background-attachment: fixed, scroll; }
+}
 .hero::after {
   content: ""; position: absolute; width: 540px; height: 540px; border-radius: 50%;
   background: radial-gradient(circle, rgba(245,195,0,0.18), transparent 65%);
