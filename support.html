@@ -11,13 +11,39 @@
   <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="css/rtl.css" />
   <link rel="icon" type="image/png" href="logo_prime.png" />
+  <style>
+    /* classroom.jpg background, blended under a soft brand-blue veil so the
+       photo reads as gentle texture while the dark section text stays legible. */
+    .sp-bg-head { position: relative; overflow: hidden; isolation: isolate; }
+    .sp-bg-head::before {
+      content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(244, 243, 255, 0.92) 0%, rgba(213, 211, 243, 0.88) 50%, rgba(88, 82, 214, 0.26) 100%),
+        radial-gradient(70% 90% at 50% -10%, rgba(88, 82, 214, 0.20), transparent 62%),
+        url("classroom.jpg") center / cover no-repeat;
+    }
+    .sp-bg-head > .container { position: relative; z-index: 1; }
+    /* Darken the lead copy so it reads cleanly over the photo. */
+    .sp-bg-head p { color: var(--navy-800); }
+    /* support_1.jpg under the same brand-blue veil so the cards lift cleanly
+       off a soft, on-theme backdrop. */
+    .sp-bg-pillars { position: relative; overflow: hidden; isolation: isolate; }
+    .sp-bg-pillars::before {
+      content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(244, 243, 255, 0.90) 0%, rgba(216, 214, 244, 0.86) 50%, rgba(88, 82, 214, 0.22) 100%),
+        radial-gradient(80% 70% at 50% 0%, rgba(88, 82, 214, 0.16), transparent 60%),
+        url("support_1.jpg") center / cover no-repeat;
+    }
+    .sp-bg-pillars > .container { position: relative; z-index: 1; }
+  </style>
 </head>
 <body>
   <div class="bg-grid"></div>
   <div id="nav-root"></div>
 
   <!-- ===================== PAGE HEAD ===================== -->
-  <section class="page-head">
+  <section class="page-head sp-bg-head">
     <div class="container">
       <span class="eyebrow" data-i18n="support.eyebrow"></span>
       <h1 data-i18n="support.title"></h1>
@@ -73,7 +99,7 @@
   </section>
 
   <!-- ===================== ACCOMMODATION HIGHLIGHT ===================== -->
-  <section class="section alt" style="padding-top:0">
+  <section class="section alt sp-bg-pillars" style="padding-top:0">
     <div class="container">
       <div class="grid grid-2 mt-4" style="align-items:center;gap:40px">
         <div class="reveal">

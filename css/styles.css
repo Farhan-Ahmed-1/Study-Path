@@ -742,7 +742,7 @@ body::before {
     linear-gradient(0deg, rgba(88,82,214,0.06), rgba(88,82,214,0.06)),
     /* soft white→cream wash fades the map to a watermark so cards stay crisp */
     radial-gradient(120% 95% at 50% 0%,
-      rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.90) 55%, rgba(250,246,236,0.97) 100%),
+      rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.70) 55%, rgba(250,246,236,0.85) 100%),
     url("../Map.jpg");
   background-size: cover, cover, cover;
   background-position: center, center, center;

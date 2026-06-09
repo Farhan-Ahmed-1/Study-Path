@@ -10,7 +10,7 @@
   /* ---- Editable site config (change these to your real details) ---- */
   const SITE = {
     brand: "Prime Education Group",
-    whatsapp: "212600000000",                 // TODO: real number, international format, no '+'
+    whatsapp: "447849742063",                 // +44 7849 742063
     formUrl: "#",                              // TODO: real consultation form / CRM link
     email: "hello@primeeducation.group",       // TODO: real email
     instagram: "#",
