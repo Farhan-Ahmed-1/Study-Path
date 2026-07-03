@@ -126,7 +126,7 @@ window.TRANSLATIONS.es = {
     waPh: "+212 ...",
     submit: "Solicitar mi consulta gratuita",
     okTitle: "¡Gracias!",
-    okMsg: "Hemos abierto WhatsApp con tus datos — envía el mensaje y nuestro equipo responderá en 24 horas.",
+    okMsg: "Hemos recibido tu solicitud de asesoría. Nuestros asesores educativos revisarán tus datos y se pondrán en contacto contigo en un plazo de 24 horas.",
     close: "Cerrar",
     waIntro: "¡Hola Prime Education Group! Quiero reservar una consulta gratuita.",
   },

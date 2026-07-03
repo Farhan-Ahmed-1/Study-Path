@@ -11,7 +11,14 @@
   const SITE = {
     brand: "Prime Education Group",
     whatsapp: "447849742063",                 // +44 7849 742063
-    formUrl: "#",                              // TODO: real consultation form / CRM link
+    // Google Form that captures consultation requests. formUrl is the
+    // /formResponse endpoint; formEntries maps modal fields -> entry ids.
+    formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSflaCkzDTBgWr_xWtWMYX-aAJiPZQuf0-aXgdoERDQAticmkQ/formResponse",
+    formEntries: {
+      name: "entry.1778743459",
+      dest: "entry.548490064",
+      wa: "entry.1143665063",
+    },
     email: "hello@primeeducation.group",       // TODO: real email
     instagram: "#",
     facebook: "#",
@@ -152,7 +159,7 @@
 
   /* ---- Site-wide "Book free consultation" modal ---- */
   function buildModal() {
-    const dest = ["United Kingdom", "Canada", "Germany", "France", "United States", "Spain"]
+    const dest = ["United Kingdom", "Canada", "Germany", "France", "United States", "Spain", "Italy", "Turkey", "Malaysia"]
       .map((d) => `<option>${d}</option>`)
       .join("");
     return `
@@ -171,8 +178,13 @@
           <button class="btn btn-gold" onclick="submitConsult()" data-i18n="modal.submit"></button>
         </div>
         <div id="ok-view" style="display:none">
-          <div class="ok">
-            <div class="tick">✓</div>
+          <div class="ok submitted">
+            <div class="success-badge">
+              <svg viewBox="0 0 56 56">
+                <circle class="ring" cx="28" cy="28" r="25"></circle>
+                <path class="tick" d="M17 29l7 7 15-16"></path>
+              </svg>
+            </div>
             <h3 data-i18n="modal.okTitle"></h3>
             <p data-i18n="modal.okMsg"></p>
             <button class="btn btn-gold" style="margin-top:18px" onclick="closeModal()" data-i18n="modal.close"></button>
@@ -197,16 +209,53 @@
     const m = document.getElementById("consultModal");
     if (m) m.classList.remove("on");
   };
+  // Silently record a lead in the Google Form by posting to its /formResponse
+  // endpoint through a hidden iframe (no page navigation). Shared with the
+  // assessment wizard via window.saveToGoogleForm.
+  function saveToGoogleForm(name, dest, wa) {
+    if (!SITE.formUrl || SITE.formUrl === "#") return;
+    const e = SITE.formEntries || {};
+    let iframe = document.getElementById("consultFormSink");
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.id = "consultFormSink";
+      iframe.name = "consultFormSink";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+    }
+    const form = document.createElement("form");
+    form.action = SITE.formUrl;
+    form.method = "POST";
+    form.target = "consultFormSink";
+    form.style.display = "none";
+    const add = (key, value) => {
+      if (!key) return;
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = value || "";
+      form.appendChild(input);
+    };
+    add(e.name, name);
+    add(e.dest, dest);
+    add(e.wa, wa);
+    document.body.appendChild(form);
+    try { form.submit(); } catch (err) {}
+    setTimeout(() => { if (form.parentNode) form.parentNode.removeChild(form); }, 1000);
+  }
+  window.saveToGoogleForm = saveToGoogleForm;
+
   window.submitConsult = function () {
-    const intro = (window.I18N && window.I18N.get("modal.waIntro")) || "Hello Prime Education Group! I'd like to book a free consultation.";
-    const msg = encodeURIComponent(
-      intro + "\n\nName: " + val("m-name") + "\nDestination: " + val("m-dest") + "\nWhatsApp: " + val("m-wa")
-    );
-    try { window.open("https://wa.me/" + SITE.whatsapp + "?text=" + msg, "_blank"); } catch (e) {}
+    saveToGoogleForm(val("m-name"), val("m-dest"), val("m-wa"));
     const fv = document.getElementById("form-view");
     const ok = document.getElementById("ok-view");
     if (fv) fv.style.display = "none";
-    if (ok) ok.style.display = "block";
+    if (ok) {
+      ok.style.display = "block";
+      // Restart the success-badge draw animation each time it is shown.
+      const badge = ok.querySelector(".success-badge");
+      if (badge) { badge.style.animation = "none"; void badge.offsetWidth; badge.style.animation = ""; }
+    }
   };
 
   function buildFloatWa() {

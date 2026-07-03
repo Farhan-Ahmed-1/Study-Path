@@ -55,6 +55,7 @@
   const TOTAL = STEPS.length;
   const answers = {};   // id -> value (or {fullName, age, phone} for q1, year for q3)
   let index = 0;
+  let basicSaved = false; // guard so the first-page lead is only saved once
 
   /* ---------- DOM refs ---------- */
   let elBody, elProgress, elBar, elStepNow, elFoot, elBackBtn, elNextBtn;
@@ -169,6 +170,15 @@
 
   function next() {
     if (!validate()) return;
+    // When leaving the first (basic) page, save the lead to the Google Form.
+    // Name + phone map to the form; age is appended to the phone value since
+    // the form has no dedicated age field. Navigation continues as normal.
+    if (STEPS[index].type === "basic" && !basicSaved && typeof window.saveToGoogleForm === "function") {
+      const a = answers.q1 || {};
+      const phone = a.age ? (a.phone + " (Age: " + a.age + ")") : a.phone;
+      window.saveToGoogleForm(a.fullName, "", phone);
+      basicSaved = true;
+    }
     if (index < TOTAL - 1) { index++; renderStep(); window.scrollTo({ top: 0, behavior: "smooth" }); }
     else showResult();
   }
@@ -268,6 +278,7 @@
 
   function restart() {
     index = 0;
+    basicSaved = false;
     Object.keys(answers).forEach((k) => delete answers[k]);
     document.getElementById("assess-top").classList.remove("hidden");
     document.getElementById("assess-progress").classList.remove("hidden");

@@ -182,7 +182,7 @@ window.TRANSLATIONS.en = {
     waPh: "+212 ...",
     submit: "Request my free consultation",
     okTitle: "Thank you!",
-    okMsg: "We've opened WhatsApp with your details — send the message and our team will reply within 24 hours.",
+    okMsg: "Your consultation request has been received. Our education advisors will review your details and get back to you within 24 hours.",
     close: "Close",
     waIntro: "Hello Prime Education Group! I'd like to book a free consultation.",
   },
