@@ -9,8 +9,6 @@
     { code: "en", flag: "🇬🇧", label: "English", native: "English", dir: "ltr" },
     { code: "ar", flag: "🇸🇦", label: "Arabic", native: "العربية", dir: "rtl" },
     { code: "fr", flag: "🇫🇷", label: "French", native: "Français", dir: "ltr" },
-    { code: "es", flag: "🇪🇸", label: "Spanish", native: "Español", dir: "ltr" },
-    { code: "hi", flag: "🇮🇳", label: "Hindi", native: "हिन्दी", dir: "ltr" },
   ];
   const STORE_KEY = "Prime' New Generation_lang";
   const DEFAULT = "en";

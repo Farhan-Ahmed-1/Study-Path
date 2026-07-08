@@ -10,14 +10,13 @@
   /* ---- Editable site config (change these to your real details) ---- */
   const SITE = {
     brand: "Prime Education Group",
-    whatsapp: "447849742063",                 // +44 7849 742063
-    // Google Form that captures consultation requests. formUrl is the
-    // /formResponse endpoint; formEntries maps modal fields -> entry ids.
-    formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSflaCkzDTBgWr_xWtWMYX-aAJiPZQuf0-aXgdoERDQAticmkQ/formResponse",
+    whatsapp: (window.SITE_CONFIG && window.SITE_CONFIG.whatsapp) || "2126XXXXXXXX",
+    formUrl: "https://docs.google.com/forms/d/e/1FAIpQLSflaCkzDTBgWr_xWtWMYX-aAJiPZQuf0-aXgdoERDQAticmkQ/viewform?usp=pp_url",
+    formResponseUrl: "https://docs.google.com/forms/d/e/1FAIpQLSflaCkzDTBgWr_xWtWMYX-aAJiPZQuf0-aXgdoERDQAticmkQ/formResponse",
     formEntries: {
       name: "entry.1778743459",
-      dest: "entry.548490064",
-      wa: "entry.1143665063",
+      destination: "entry.548490064",
+      whatsapp: "entry.1143665063",
     },
     email: "hello@primeeducation.group",       // TODO: real email
     instagram: "#",
@@ -29,11 +28,14 @@
 
   const PAGES = [
     { href: "index.html", key: "nav.home" },
+    { href: "about.html", key: "nav.about" },
     { href: "countries.html", key: "nav.countries" },
-    { href: "assessment.html", key: "nav.assessment" },
+    { href: "level7.html", key: "nav.level7" },
     { href: "support.html", key: "nav.support" },
-    { href: "forum.html", key: "nav.forum" },
     { href: "contact.html", key: "nav.contact" },
+    // Re-enable when content exists:
+    // { href: "blog.html", key: "nav.blog" },
+    // { href: "forum.html", key: "nav.forum" },
   ];
 
   const ICON = {
@@ -86,6 +88,7 @@
             </button>
             <div class="lang-menu" id="langMenu" role="menu">${langBtns}</div>
           </div>
+          <div class="auth-slot" id="authSlot"></div>
           <button class="btn btn-gold" data-i18n="nav.book" onclick="openModal()"></button>
         </div>
         <button class="nav-toggle" id="navToggle" aria-label="Menu">${ICON.menu}</button>
@@ -127,23 +130,26 @@
           <div>
             <h4 data-i18n="footer.exploreTitle"></h4>
             <ul>
-              <li><a href="assessment.html" data-i18n="footer.a1"></a></li>
               <li><a href="countries.html" data-i18n="footer.a2"></a></li>
-              <li><a href="forum.html" data-i18n="footer.a3"></a></li>
+              <li><a href="level7.html" data-i18n="footer.a4"></a></li>
+              <li><a href="support.html" data-i18n="footer.a5"></a></li>
+              <!-- Re-enable when content exists:
+              <li><a href="blog.html" data-i18n="footer.a1"></a></li>
+              <li><a href="forum.html" data-i18n="footer.a3"></a></li> -->
             </ul>
           </div>
           <div>
             <h4 data-i18n="footer.resourcesTitle"></h4>
             <ul>
-              <li><a href="assessment.html" data-i18n="footer.r1"></a></li>
+              <li><a href="prime-academy.html" data-i18n="footer.r1"></a></li>
               <li><a href="countries.html" data-i18n="footer.r2"></a></li>
-              <li><a href="forum.html" data-i18n="footer.r3"></a></li>
+              <li><a href="assessment.html" data-i18n="footer.r4"></a></li>
             </ul>
           </div>
           <div>
             <h4 data-i18n="footer.companyTitle"></h4>
             <ul>
-              <li><a href="index.html" data-i18n="footer.c1"></a></li>
+              <li><a href="about.html" data-i18n="footer.c1"></a></li>
               <li><a href="contact.html" data-i18n="footer.c2"></a></li>
               <li><a href="contact.html" data-i18n="footer.c3"></a></li>
             </ul>
@@ -159,9 +165,8 @@
 
   /* ---- Site-wide "Book free consultation" modal ---- */
   function buildModal() {
-    const dest = ["United Kingdom", "Canada", "Germany", "France", "United States", "Spain", "Italy", "Turkey", "Malaysia"]
-      .map((d) => `<option>${d}</option>`)
-      .join("");
+    const destinations = ["United Kingdom", "Canada", "Germany", "France", "United States", "Spain"];
+    const destOpts = destinations.map((d) => `<option>${d}</option>`).join("");
     return `
     <div class="modal-bg" id="consultModal">
       <div class="modal">
@@ -172,22 +177,23 @@
           <label data-i18n="modal.name"></label>
           <input id="m-name" type="text" data-i18n-attr="placeholder:modal.namePh" />
           <label data-i18n="modal.dest"></label>
-          <select id="m-dest">${dest}<option data-i18n="modal.notSure"></option></select>
-          <label data-i18n="modal.wa"></label>
-          <input id="m-wa" type="tel" data-i18n-attr="placeholder:modal.waPh" />
-          <button class="btn btn-gold" onclick="submitConsult()" data-i18n="modal.submit"></button>
+          <select id="m-dest">${destOpts}<option data-i18n="modal.notSure"></option></select>
+          <button class="btn btn-gold" style="width:100%;margin-top:18px" onclick="submitConsultWA()" data-i18n="modal.waBtn"></button>
+          <p style="margin-top:10px;font-size:0.78rem;color:var(--muted,#888);text-align:center" data-i18n="modal.waSub"></p>
         </div>
         <div id="ok-view" style="display:none">
-          <div class="ok submitted">
-            <div class="success-badge">
-              <svg viewBox="0 0 56 56">
-                <circle class="ring" cx="28" cy="28" r="25"></circle>
-                <path class="tick" d="M17 29l7 7 15-16"></path>
-              </svg>
-            </div>
+          <div class="ok">
+            <div class="tick">✓</div>
             <h3 data-i18n="modal.okTitle"></h3>
             <p data-i18n="modal.okMsg"></p>
             <button class="btn btn-gold" style="margin-top:18px" onclick="closeModal()" data-i18n="modal.close"></button>
+          </div>
+        </div>
+        <div id="error-view" style="display:none">
+          <div class="ok">
+            <p data-i18n="modal.errMsg"></p>
+            <a id="modal-direct-wa" class="btn btn-gold" style="display:block;text-align:center;margin-top:12px" target="_blank" rel="noopener" data-i18n="modal.waBtn"></a>
+            <button class="btn btn-ghost" style="margin-top:10px;width:100%" onclick="closeModal()" data-i18n="modal.close"></button>
           </div>
         </div>
       </div>
@@ -196,67 +202,167 @@
 
   function val(id) { const el = document.getElementById(id); return el ? el.value : ""; }
 
+  function addHiddenField(form, name, value) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  }
+
+  /* Fires Google Form silently in the background — backup data capture only. */
+  function submitConsultFormBackground(name, dest) {
+    const frameName = "consult-submit-frame";
+    let frame = document.querySelector('iframe[name="' + frameName + '"]');
+    if (!frame) {
+      frame = document.createElement("iframe");
+      frame.name = frameName;
+      frame.style.display = "none";
+      document.body.appendChild(frame);
+    }
+    const form = document.createElement("form");
+    form.action = SITE.formResponseUrl;
+    form.method = "POST";
+    form.target = frameName;
+    form.style.display = "none";
+    addHiddenField(form, SITE.formEntries.name, name);
+    addHiddenField(form, SITE.formEntries.destination, dest);
+    addHiddenField(form, SITE.formEntries.whatsapp, "via-whatsapp");
+    addHiddenField(form, "fvv", "1");
+    addHiddenField(form, "pageHistory", "0");
+    document.body.appendChild(form);
+    try { form.submit(); } catch (e) { console.warn("[Modal] Form backup failed:", e); }
+    form.remove();
+  }
+
   window.openModal = function () {
     const m = document.getElementById("consultModal");
     if (!m) return;
     m.classList.add("on");
     const fv = document.getElementById("form-view");
     const ok = document.getElementById("ok-view");
+    const err = document.getElementById("error-view");
     if (fv) fv.style.display = "block";
     if (ok) ok.style.display = "none";
+    if (err) err.style.display = "none";
   };
   window.closeModal = function () {
     const m = document.getElementById("consultModal");
     if (m) m.classList.remove("on");
   };
-  // Silently record a lead in the Google Form by posting to its /formResponse
-  // endpoint through a hidden iframe (no page navigation). Shared with the
-  // assessment wizard via window.saveToGoogleForm.
-  function saveToGoogleForm(name, dest, wa) {
-    if (!SITE.formUrl || SITE.formUrl === "#") return;
-    const e = SITE.formEntries || {};
-    let iframe = document.getElementById("consultFormSink");
-    if (!iframe) {
-      iframe = document.createElement("iframe");
-      iframe.id = "consultFormSink";
-      iframe.name = "consultFormSink";
-      iframe.style.display = "none";
-      document.body.appendChild(iframe);
-    }
-    const form = document.createElement("form");
-    form.action = SITE.formUrl;
-    form.method = "POST";
-    form.target = "consultFormSink";
-    form.style.display = "none";
-    const add = (key, value) => {
-      if (!key) return;
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = key;
-      input.value = value || "";
-      form.appendChild(input);
-    };
-    add(e.name, name);
-    add(e.dest, dest);
-    add(e.wa, wa);
-    document.body.appendChild(form);
-    try { form.submit(); } catch (err) {}
-    setTimeout(() => { if (form.parentNode) form.parentNode.removeChild(form); }, 1000);
-  }
-  window.saveToGoogleForm = saveToGoogleForm;
 
-  window.submitConsult = function () {
-    saveToGoogleForm(val("m-name"), val("m-dest"), val("m-wa"));
+  /* WhatsApp-primary submission: open WA chat + silent form backup. */
+  window.submitConsultWA = function () {
+    const name = val("m-name").trim();
+    const dest = val("m-dest").trim();
+    const waNumber = SITE.whatsapp;
+    const msg = encodeURIComponent(
+      "Hi Prime Education Group! I’d like to book a free consultation.\n" +
+      "Name: " + (name || "—") + "\n" +
+      "Destination: " + (dest || "Not decided yet")
+    );
+    const waUrl = "https://wa.me/" + waNumber + "?text=" + msg;
+
+    console.log("[Modal] Consultation submitted:", new Date().toISOString(), { name, dest });
+
+    window.open(waUrl, "_blank", "noopener,noreferrer");
+    submitConsultFormBackground(name, dest);
+
     const fv = document.getElementById("form-view");
     const ok = document.getElementById("ok-view");
     if (fv) fv.style.display = "none";
-    if (ok) {
-      ok.style.display = "block";
-      // Restart the success-badge draw animation each time it is shown.
-      const badge = ok.querySelector(".success-badge");
-      if (badge) { badge.style.animation = "none"; void badge.offsetWidth; badge.style.animation = ""; }
-    }
+    if (ok) ok.style.display = "block";
   };
+
+  /* ---- Site-wide sign in / sign up modal ---- */
+  function buildAuthModal() {
+    return `
+    <div class="modal-bg" id="authModal">
+      <div class="modal">
+        <button class="x" onclick="closeAuthModal()" aria-label="Close">×</button>
+        <div id="signin-view">
+          <h3 data-i18n="auth.signInTitle"></h3>
+          <p class="auth-lead" data-i18n="auth.signInLead"></p>
+          <label data-i18n="auth.email"></label>
+          <input id="a-in-email" type="email" data-i18n-attr="placeholder:auth.emailPh" />
+          <label data-i18n="auth.password"></label>
+          <input id="a-in-password" type="password" data-i18n-attr="placeholder:auth.passwordPh" />
+          <p class="auth-error" id="authInError" style="display:none"></p>
+          <button class="btn btn-gold" onclick="submitSignIn()" data-i18n="auth.signInBtn"></button>
+          <p class="auth-switch"><a onclick="showAuthView('signup')" data-i18n="auth.toSignUp"></a></p>
+        </div>
+        <div id="signup-view" style="display:none">
+          <h3 data-i18n="auth.signUpTitle"></h3>
+          <p class="auth-lead" data-i18n="auth.signUpLead"></p>
+          <label data-i18n="auth.name"></label>
+          <input id="a-up-name" type="text" data-i18n-attr="placeholder:auth.namePh" />
+          <label data-i18n="auth.email"></label>
+          <input id="a-up-email" type="email" data-i18n-attr="placeholder:auth.emailPh" />
+          <label data-i18n="auth.password"></label>
+          <input id="a-up-password" type="password" data-i18n-attr="placeholder:auth.passwordPh" />
+          <p class="auth-error" id="authUpError" style="display:none"></p>
+          <button class="btn btn-gold" onclick="submitSignUp()" data-i18n="auth.signUpBtn"></button>
+          <p class="auth-switch"><a onclick="showAuthView('signin')" data-i18n="auth.toSignIn"></a></p>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  window.showAuthView = function (view) {
+    const inView = document.getElementById("signin-view");
+    const upView = document.getElementById("signup-view");
+    if (inView) inView.style.display = view === "signin" ? "block" : "none";
+    if (upView) upView.style.display = view === "signup" ? "block" : "none";
+  };
+
+  window.openAuthModal = function (view) {
+    const m = document.getElementById("authModal");
+    if (!m) return;
+    m.classList.add("on");
+    window.showAuthView(view || "signin");
+  };
+
+  window.closeAuthModal = function () {
+    const m = document.getElementById("authModal");
+    if (m) m.classList.remove("on");
+  };
+
+  function showAuthError(id, err) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = (err && err.message) || window.I18N.get("auth.error");
+    el.style.display = "block";
+  }
+
+  window.submitSignIn = function () {
+    const err = document.getElementById("authInError");
+    if (err) err.style.display = "none";
+    window.Auth.signIn(val("a-in-email"), val("a-in-password"))
+      .then(function () { window.closeAuthModal(); })
+      .catch(function (e) { showAuthError("authInError", e); });
+  };
+
+  window.submitSignUp = function () {
+    const err = document.getElementById("authUpError");
+    if (err) err.style.display = "none";
+    window.Auth.signUp(val("a-up-name"), val("a-up-email"), val("a-up-password"))
+      .then(function (user) { window.closeAuthModal(); renderAuthSlot(user); })
+      .catch(function (e) { showAuthError("authUpError", e); });
+  };
+
+  function renderAuthSlot(user) {
+    const slot = document.getElementById("authSlot");
+    if (!slot) return;
+    if (user) {
+      slot.innerHTML = `<div class="auth-account">
+        <span class="auth-name">${(user.displayName || user.email || "").replace(/</g, "&lt;")}</span>
+        <button class="btn btn-ghost btn-sm" data-i18n="nav.logout" onclick="Auth.signOut()"></button>
+      </div>`;
+    } else {
+      slot.innerHTML = `<button class="btn btn-ghost" data-i18n="nav.signin" onclick="openAuthModal('signin')"></button>`;
+    }
+    window.I18N.apply(slot);
+  }
 
   function buildFloatWa() {
     return `<a href="https://wa.me/${SITE.whatsapp}" class="float-wa" target="_blank" rel="noopener" aria-label="WhatsApp">${ICON.wa}</a>`;
@@ -333,13 +439,17 @@
 
     // Site-wide modal + floating WhatsApp button.
     const extras = document.createElement("div");
-    extras.innerHTML = buildModal() + buildFloatWa();
+    extras.innerHTML = buildModal() + buildAuthModal() + buildFloatWa();
     document.body.appendChild(extras);
     const modal = document.getElementById("consultModal");
     if (modal) modal.addEventListener("click", function (e) { if (e.target === modal) window.closeModal(); });
+    const authModal = document.getElementById("authModal");
+    if (authModal) authModal.addEventListener("click", function (e) { if (e.target === authModal) window.closeAuthModal(); });
 
     window.I18N.init();          // applies saved language across the whole page
     if (navMount) { wireLangSwitch(); wireMobileNav(); }
+    // Re-enable when user accounts are part of the public experience:
+    // if (navMount && window.Auth) window.Auth.onChange(renderAuthSlot);
 
     // Let page-specific scripts render translatable content, then reveal.
     window.dispatchEvent(new CustomEvent("components:ready"));

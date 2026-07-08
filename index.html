@@ -40,7 +40,7 @@
         </div>
         <div class="hero-card">
           <span class="badge" data-i18n="home.hero.cardBadge"></span>
-          <h3><a href="https://newcastleedugroup.com/" target="_blank" rel="noopener" style="color:inherit" data-i18n="home.hero.cardTitle"></a></h3>
+          <h3 data-i18n="home.hero.cardTitle"></h3>
           <p data-i18n="home.hero.cardLead"></p>
           <div class="ck"><b>✓</b><span data-i18n="home.hero.ck1"></span></div>
           <div class="ck"><b>✓</b><span data-i18n="home.hero.ck2"></span></div>
@@ -48,11 +48,12 @@
         </div>
       </div>
       <div class="hero-stats">
-        <div><div class="n" data-i18n="home.hero.stat1n"></div><div class="l" data-i18n="home.hero.stat1l"></div></div>
+        <div><div class="n" id="dest-count" data-i18n="home.hero.stat1n"></div><div class="l" data-i18n="home.hero.stat1l"></div></div>
         <div><div class="n" data-i18n="home.hero.stat2n"></div><div class="l" data-i18n="home.hero.stat2l"></div></div>
         <div><div class="n" data-i18n="home.hero.stat3n"></div><div class="l" data-i18n="home.hero.stat3l"></div></div>
         <div><div class="n" data-i18n="home.hero.stat4n"></div><div class="l" data-i18n="home.hero.stat4l"></div></div>
       </div>
+      <p class="hero-footnote" data-i18n="home.hero.freeFn" style="margin-top:12px;font-size:0.75rem;color:var(--muted,#888)"></p>
     </div>
   </section>
 
@@ -145,6 +146,20 @@
     </div>
   </section>
 
+  <!-- ===================== LEVEL 7 CARD ===================== -->
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="l7-card reveal" style="background:var(--dark,#0e1117);color:#fff;border-radius:16px;padding:40px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px">
+        <div>
+          <span class="eyebrow p" style="color:var(--gold,#d4a843)" data-i18n="home.l7.eyebrow"></span>
+          <h3 style="margin:8px 0 10px;font-size:clamp(1.25rem,2.5vw,1.75rem)" data-i18n="home.l7.title"></h3>
+          <p style="max-width:520px;color:rgba(255,255,255,0.75);margin:0" data-i18n="home.l7.lead"></p>
+        </div>
+        <a href="level7.html" class="btn btn-gold" style="white-space:nowrap" data-i18n="home.l7.cta"></a>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== SCHOLARSHIPS ===================== -->
   <section class="section" style="padding-top:0">
     <div class="container">
@@ -158,27 +173,30 @@
     </div>
   </section>
 
-  <!-- ===================== STORIES ===================== -->
+  <!-- ===================== NEW BRAND. SERIOUS BACKING. ===================== -->
   <section class="section alt">
     <div class="container">
       <div class="center reveal" style="max-width:680px;margin-inline:auto">
-        <span class="eyebrow p" data-i18n="home.testimonials.eyebrow"></span>
-        <h2 class="section-title" data-i18n="home.testimonials.title"></h2>
-        <p class="section-lead" data-i18n="home.testimonials.lead"></p>
+        <span class="eyebrow p" data-i18n="home.trust.eyebrow"></span>
+        <h2 class="section-title" data-i18n="home.trust.title"></h2>
+        <p class="section-lead" data-i18n="home.trust.body"></p>
       </div>
-      <div class="stories">
-        <div class="story reveal">
-          <div class="q" data-i18n="home.testimonials.t1"></div>
-          <div class="who"><div class="av">A</div><div><div class="nm" data-i18n="home.testimonials.t1n"></div><div class="dt" data-i18n="home.testimonials.t1r"></div></div></div>
+      <div class="grid grid-3 mt-4 reveal">
+        <div class="lf" style="text-align:center;padding:24px">
+          <h4 data-i18n="home.trust.c1t"></h4>
+          <p data-i18n="home.trust.c1d"></p>
         </div>
-        <div class="story reveal">
-          <div class="q" data-i18n="home.testimonials.t2"></div>
-          <div class="who"><div class="av">S</div><div><div class="nm" data-i18n="home.testimonials.t2n"></div><div class="dt" data-i18n="home.testimonials.t2r"></div></div></div>
+        <div class="lf" style="text-align:center;padding:24px">
+          <h4 data-i18n="home.trust.c2t"></h4>
+          <p data-i18n="home.trust.c2d"></p>
         </div>
-        <div class="story reveal">
-          <div class="q" data-i18n="home.testimonials.t3"></div>
-          <div class="who"><div class="av">Y</div><div><div class="nm" data-i18n="home.testimonials.t3n"></div><div class="dt" data-i18n="home.testimonials.t3r"></div></div></div>
+        <div class="lf" style="text-align:center;padding:24px">
+          <h4 data-i18n="home.trust.c3t"></h4>
+          <p data-i18n="home.trust.c3d"></p>
         </div>
+      </div>
+      <div class="center mt-4">
+        <button class="btn btn-gold" onclick="submitConsultWA()" data-i18n="home.trust.cta"></button>
       </div>
     </div>
   </section>
@@ -200,10 +218,10 @@
   <script src="i18n/en.js"></script>
   <script src="i18n/ar.js"></script>
   <script src="i18n/fr.js"></script>
-  <script src="i18n/es.js"></script>
-  <script src="i18n/hi.js"></script>
   <script src="js/i18n.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/countries.js"></script>
+  <script src="js/testimonials.js"></script>
   <script src="js/components.js"></script>
   <script>
     // Render the destination cards on the home page once components are ready.
@@ -212,6 +230,15 @@
     });
     window.addEventListener("languagechange", function () {
       if (window.Countries) window.Countries.renderHome("home-countries", 6);
+    });
+    window.addEventListener("countries:ready", function () {
+      if (window.Countries) {
+        window.Countries.renderHome("home-countries", 6);
+        var el = document.getElementById("dest-count");
+        if (el && window.Countries.all && window.Countries.all.length) {
+          el.textContent = window.Countries.all.length;
+        }
+      }
     });
   </script>
 </body>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Level 7 Diploma — UK Master's Pathway | Prime Education Group</title>
+  <meta name="description" content="The Level 7 Diploma is an Ofqual-regulated route to a UK Master's for experienced professionals without a Bachelor's degree. Find out if you qualify." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/rtl.css" />
+  <link rel="icon" type="image/png" href="logo_prime.png" />
+  <style>
+    .l7-honest {
+      border-left: 3px solid var(--gold, #d4a843);
+      padding: 14px 18px;
+      background: rgba(212,168,67,.07);
+      border-radius: 0 8px 8px 0;
+      margin-top: 24px;
+      font-size: .93rem;
+      color: var(--muted, #666);
+    }
+    .faq-item { border-bottom: 1px solid var(--border, #e5e7eb); }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 0; cursor: pointer; font-weight: 600; gap: 16px;
+    }
+    .faq-q::after { content: "+"; font-size: 1.4rem; flex-shrink: 0; color: var(--gold, #d4a843); }
+    .faq-item.open .faq-q::after { content: "−"; }
+    .faq-a { display: none; padding-bottom: 18px; color: var(--muted, #555); line-height: 1.75; }
+    .faq-item.open .faq-a { display: block; }
+    .cost-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+    .cost-table th, .cost-table td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--border, #e5e7eb); }
+    .cost-table th { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted, #888); }
+    .cost-table tr:last-child td { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <div id="nav-root"></div>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero" style="padding-bottom:60px">
+    <div class="container">
+      <div style="max-width:760px">
+        <span class="eyebrow" data-i18n="l7.hero.badge"></span>
+        <h1 data-i18n="l7.hero.title"></h1>
+        <p class="lead" data-i18n="l7.hero.lead"></p>
+        <div class="hero-cta" style="margin-top:32px">
+          <button class="btn btn-gold btn-lg" onclick="submitConsultWA()" data-i18n="l7.hero.cta1"></button>
+          <button class="btn btn-ghost btn-lg" onclick="openModal()" data-i18n="l7.hero.cta2"></button>
+        </div>
+        <p class="l7-honest" data-i18n="l7.hero.honest"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHO IT'S FOR ===================== -->
+  <section class="section alt" id="who">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="l7.who.eyebrow"></span>
+        <h2 class="section-title" data-i18n="l7.who.title"></h2>
+        <p class="section-lead" data-i18n="l7.who.lead"></p>
+      </div>
+      <div class="grid grid-2 mt-4">
+        <div class="card feature reveal">
+          <h3 data-i18n="l7.who.c1t"></h3>
+          <p data-i18n="l7.who.c1d"></p>
+        </div>
+        <div class="card feature reveal">
+          <h3 data-i18n="l7.who.c2t"></h3>
+          <p data-i18n="l7.who.c2d"></p>
+        </div>
+        <div class="card feature reveal">
+          <h3 data-i18n="l7.who.c3t"></h3>
+          <p data-i18n="l7.who.c3d"></p>
+        </div>
+        <div class="card feature reveal">
+          <h3 data-i18n="l7.who.c4t"></h3>
+          <p data-i18n="l7.who.c4d"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HOW IT WORKS ===================== -->
+  <section class="section" id="how">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="l7.how.eyebrow"></span>
+        <h2 class="section-title" data-i18n="l7.how.title"></h2>
+        <p class="section-lead" data-i18n="l7.how.intro"></p>
+      </div>
+      <div class="funnel mt-4">
+        <div class="fstep reveal"><div class="n">1</div><h4 data-i18n="l7.how.s1t"></h4><p data-i18n="l7.how.s1d"></p></div>
+        <div class="fstep reveal"><div class="n">2</div><h4 data-i18n="l7.how.s2t"></h4><p data-i18n="l7.how.s2d"></p></div>
+        <div class="fstep reveal"><div class="n">3</div><h4 data-i18n="l7.how.s3t"></h4><p data-i18n="l7.how.s3d"></p></div>
+        <div class="fstep reveal"><div class="n">4</div><h4 data-i18n="l7.how.s4t"></h4><p data-i18n="l7.how.s4d"></p></div>
+      </div>
+      <div class="l7-honest reveal" data-i18n="l7.how.note" style="max-width:720px;margin:32px auto 0"></div>
+    </div>
+  </section>
+
+  <!-- ===================== WHY PROFESSIONALS CHOOSE IT ===================== -->
+  <section class="section alt" id="why">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="l7.why.eyebrow"></span>
+        <h2 class="section-title" data-i18n="l7.why.title"></h2>
+      </div>
+      <div class="grid grid-2 mt-4">
+        <div class="card feature reveal">
+          <h3 data-i18n="l7.why.c1t"></h3>
+          <p data-i18n="l7.why.c1d"></p>
+        </div>
+        <div class="card feature reveal">
+          <h3 data-i18n="l7.why.c2t"></h3>
+          <p data-i18n="l7.why.c2d"></p>
+        </div>
+        <div class="card feature reveal">
+          <h3 data-i18n="l7.why.c3t"></h3>
+          <p data-i18n="l7.why.c3d"></p>
+        </div>
+        <div class="card feature reveal">
+          <h3 data-i18n="l7.why.c4t"></h3>
+          <p data-i18n="l7.why.c4d"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHAT IT COSTS ===================== -->
+  <section class="section" id="cost">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="l7.cost.eyebrow"></span>
+        <h2 class="section-title" data-i18n="l7.cost.title"></h2>
+        <p class="section-lead" data-i18n="l7.cost.lead"></p>
+      </div>
+      <div class="reveal" style="max-width:600px;margin:32px auto 0">
+        <table class="cost-table">
+          <thead><tr><th data-i18n="l7.cost.row1l">Level 7 Diploma fee</th><th data-i18n="l7.cost.row1v">Confirmed at consultation</th></tr></thead>
+          <tbody>
+            <tr><td data-i18n="l7.cost.row2l">Our advisory fee</td><td data-i18n="l7.cost.row2v">None — free placement</td></tr>
+            <tr><td data-i18n="l7.cost.row3l">UK Master's tuition</td><td data-i18n="l7.cost.row3v">Varies by university</td></tr>
+          </tbody>
+        </table>
+        <p class="l7-honest" data-i18n="l7.cost.note"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ELIGIBILITY CTA ===================== -->
+  <section class="final" id="eligibility">
+    <div class="container">
+      <span class="eyebrow" data-i18n="l7.elig.eyebrow"></span>
+      <h2 data-i18n="l7.elig.title"></h2>
+      <p data-i18n="l7.elig.body"></p>
+      <button class="btn btn-gold btn-lg" style="margin-top:28px" onclick="submitConsultWA()" data-i18n="l7.elig.cta"></button>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="section alt" id="faq">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="l7.faq.eyebrow"></span>
+        <h2 class="section-title" data-i18n="l7.faq.title"></h2>
+      </div>
+      <div style="max-width:720px;margin:40px auto 0">
+        <div class="faq-item reveal">
+          <div class="faq-q" data-i18n="l7.faq.q1"></div>
+          <div class="faq-a" data-i18n="l7.faq.a1"></div>
+        </div>
+        <div class="faq-item reveal">
+          <div class="faq-q" data-i18n="l7.faq.q2"></div>
+          <div class="faq-a" data-i18n="l7.faq.a2"></div>
+        </div>
+        <div class="faq-item reveal">
+          <div class="faq-q" data-i18n="l7.faq.q3"></div>
+          <div class="faq-a" data-i18n="l7.faq.a3"></div>
+        </div>
+        <div class="faq-item reveal">
+          <div class="faq-q" data-i18n="l7.faq.q4"></div>
+          <div class="faq-a" data-i18n="l7.faq.a4"></div>
+        </div>
+        <div class="faq-item reveal">
+          <div class="faq-q" data-i18n="l7.faq.q5"></div>
+          <div class="faq-a" data-i18n="l7.faq.a5"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-root"></div>
+
+  <script src="i18n/en.js"></script>
+  <script src="i18n/ar.js"></script>
+  <script src="i18n/fr.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    document.querySelectorAll(".faq-q").forEach(function (q) {
+      q.addEventListener("click", function () {
+        var item = q.closest(".faq-item");
+        item.classList.toggle("open");
+      });
+    });
+  </script>
+</body>
+</html>

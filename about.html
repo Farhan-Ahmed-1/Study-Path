@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — Prime Education Group</title>
+  <meta name="description" content="Prime Education Group is a Moroccan study-abroad agency built by people who made the journey. Honest guidance, real support, and a team on the ground in the UK and Europe." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/rtl.css" />
+  <link rel="icon" type="image/png" href="logo_prime.png" />
+</head>
+<body>
+  <div id="nav-root"></div>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero" style="padding-bottom:60px">
+    <div class="container">
+      <div style="max-width:720px">
+        <span class="eyebrow" data-i18n="about.hero.badge"></span>
+        <h1 data-i18n="about.hero.title"></h1>
+        <p class="lead" data-i18n="about.hero.lead"></p>
+        <button class="btn btn-gold btn-lg" style="margin-top:28px" onclick="submitConsultWA()" data-i18n="about.hero.cta"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== OUR STORY ===================== -->
+  <section class="section alt" id="story">
+    <div class="container">
+      <div style="max-width:800px;margin-inline:auto">
+        <span class="eyebrow p reveal" data-i18n="about.story.eyebrow"></span>
+        <h2 class="section-title reveal" data-i18n="about.story.title"></h2>
+        <p class="reveal" style="margin-top:24px;font-size:1.05rem;line-height:1.8" data-i18n="about.story.p1"></p>
+        <p class="reveal" style="margin-top:18px;font-size:1.05rem;line-height:1.8" data-i18n="about.story.p2"></p>
+        <p class="reveal" style="margin-top:18px;font-size:1.05rem;line-height:1.8" data-i18n="about.story.p3"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MISSION & VISION ===================== -->
+  <section class="section" id="mission">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="about.mission.eyebrow"></span>
+        <h2 class="section-title" data-i18n="about.mission.title"></h2>
+      </div>
+      <div class="grid grid-2 mt-4">
+        <div class="card reveal" style="padding:36px">
+          <h3 style="margin:0 0 14px;font-size:1.1rem;color:var(--gold,#d4a843)" data-i18n="about.mission.mLabel"></h3>
+          <p data-i18n="about.mission.mText"></p>
+        </div>
+        <div class="card reveal" style="padding:36px">
+          <h3 style="margin:0 0 14px;font-size:1.1rem;color:var(--gold,#d4a843)" data-i18n="about.mission.vLabel"></h3>
+          <p data-i18n="about.mission.vText"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== OUR VALUES ===================== -->
+  <section class="section alt" id="values">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="about.values.eyebrow"></span>
+        <h2 class="section-title" data-i18n="about.values.title"></h2>
+      </div>
+      <div class="grid grid-2 mt-4" style="gap:20px">
+        <div class="card feature reveal">
+          <h3 data-i18n="about.values.v1t"></h3>
+          <p data-i18n="about.values.v1d"></p>
+        </div>
+        <div class="card feature reveal">
+          <h3 data-i18n="about.values.v2t"></h3>
+          <p data-i18n="about.values.v2d"></p>
+        </div>
+        <div class="card feature reveal">
+          <h3 data-i18n="about.values.v3t"></h3>
+          <p data-i18n="about.values.v3d"></p>
+        </div>
+        <div class="card feature reveal">
+          <h3 data-i18n="about.values.v4t"></h3>
+          <p data-i18n="about.values.v4d"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TWO DIVISIONS ===================== -->
+  <section class="section" id="divisions">
+    <div class="container">
+      <div class="center reveal" style="max-width:680px;margin-inline:auto">
+        <span class="eyebrow p" data-i18n="about.divs.eyebrow"></span>
+        <h2 class="section-title" data-i18n="about.divs.title"></h2>
+        <p class="section-lead" data-i18n="about.divs.lead"></p>
+      </div>
+      <div class="doors mt-4">
+        <div class="door g reveal">
+          <div>
+            <h3 data-i18n="about.divs.d1t"></h3>
+            <p data-i18n="about.divs.d1d"></p>
+            <span class="go" onclick="location.href='prime-global.html'" data-i18n="about.divs.d1cta"></span>
+          </div>
+        </div>
+        <div class="door a reveal">
+          <div>
+            <h3 data-i18n="about.divs.d2t"></h3>
+            <p data-i18n="about.divs.d2d"></p>
+            <span class="go" onclick="location.href='prime-academy.html'" data-i18n="about.divs.d2cta"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FINAL CTA ===================== -->
+  <section class="final" id="cta">
+    <div class="container">
+      <span class="eyebrow" data-i18n="about.cta.eyebrow"></span>
+      <h2 data-i18n="about.cta.title"></h2>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:28px">
+        <button class="btn btn-gold btn-lg" onclick="submitConsultWA()" data-i18n="about.cta.wa"></button>
+        <button class="btn btn-ghost btn-lg" onclick="openModal()" data-i18n="about.cta.btn"></button>
+      </div>
+      <div class="sm" style="margin-top:16px" data-i18n="about.cta.sm"></div>
+    </div>
+  </section>
+
+  <div id="footer-root"></div>
+
+  <script src="i18n/en.js"></script>
+  <script src="i18n/ar.js"></script>
+  <script src="i18n/fr.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/components.js"></script>
+</body>
+</html>

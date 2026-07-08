@@ -1,7 +1,23 @@
 /* =====================================================================
-   Countries — data + rendering for the home strip, the countries list,
-   and the country-details page. Localizable text fields are {lang} maps;
-   numbers / proper nouns stay the same across languages.
+   Countries — data lives in Firestore ("countries" collection, one doc
+   per destination) and is added/edited by the admin directly in the
+   Firebase console. This file renders the home strip, the countries
+   list, and the country-details page from that data.
+
+   Firestore doc shape (collection "countries", doc id = slug e.g. "france"):
+     flag, name           — plain strings
+     region, intake, work, desc, notes, afterGraduation — {en, ar, fr} localized maps
+     currency             — "EUR" | "USD" | "GBP" | "CAD"
+     tuitionMin/Max        — per year, numeric (overall range across partner universities)
+     livingMin/Max         — per month, numeric
+     proofAmount           — numeric
+     flightEstimate        — numeric, in MAD
+     langs                 — plain string
+     unis                  — [{ name, type: "private"|"public", tuitionMin, tuitionMax }, ...]
+     visaSteps              — [{en, ar, fr}, ...] ordered checklist
+     profile                — { capital, population, currencyName (plain strings),
+                                 climate, terrain, keyIndustries, gdp ({en,ar,fr} maps) }
+     order                  — display order
    ===================================================================== */
 (function () {
   "use strict";
@@ -13,217 +29,27 @@
     return field[c] || field.en || "";
   }
 
-  const DATA = [
-    {
-      id: "spain", flag: "🇪🇸", name: "Spain",
-      region: { en: "Southern Europe", ar: "جنوب أوروبا", fr: "Europe du Sud", es: "Europa del Sur", hi: "दक्षिणी यूरोप" },
-      tuition: "€1,000 – €4,000", living: "€700 – €1,000",
-      proof: "≈ €8,000", langs: "Español, English",
-      intake: { en: "Sept / Feb", ar: "سبتمبر / فبراير", fr: "Sept. / Fév.", es: "Sept / Feb", hi: "सितंबर / फ़रवरी" },
-      work: { en: "Up to 30h/week", ar: "حتى 30 ساعة/أسبوع", fr: "Jusqu'à 30h/sem.", es: "Hasta 30h/semana", hi: "30 घंटे/सप्ताह तक" },
-      unis: ["Universidad Complutense de Madrid", "Universitat de Barcelona", "Universidad de Valencia"],
-      desc: {
-        en: "Affordable tuition, warm climate and a fast-growing destination for international students.",
-        ar: "رسوم معقولة، مناخ دافئ، ووجهة سريعة النمو للطلاب الدوليين.",
-        fr: "Frais abordables, climat agréable et destination en plein essor pour les étudiants.",
-        es: "Matrícula asequible, clima cálido y un destino en auge para estudiantes internacionales.",
-        hi: "किफ़ायती फ़ीस, गर्म जलवायु और अंतरराष्ट्रीय छात्रों के लिए तेज़ी से बढ़ता गंतव्य।",
-      },
-      notes: {
-        en: "Proof of funds and a NIE student permit are required. Language courses can be a smart first step.",
-        ar: "يلزم إثبات الأموال وتصريح طالب (NIE). قد تكون دورات اللغة خطوة أولى ذكية.",
-        fr: "Preuve de fonds et permis étudiant (NIE) requis. Les cours de langue sont un bon premier pas.",
-        es: "Se requiere prueba de fondos y permiso de estudiante (NIE). Los cursos de idioma son un buen primer paso.",
-        hi: "फ़ंड का प्रमाण और छात्र परमिट (NIE) आवश्यक है। भाषा कोर्स एक अच्छा पहला कदम हो सकता है।",
-      },
-    },
-    {
-      id: "france", flag: "🇫🇷", name: "France",
-      region: { en: "Western Europe", ar: "غرب أوروبا", fr: "Europe de l'Ouest", es: "Europa Occidental", hi: "पश्चिमी यूरोप" },
-      tuition: "€170 – €3,800", living: "€800 – €1,200",
-      proof: "≈ €7,400", langs: "Français, English",
-      intake: { en: "Sept / Jan", ar: "سبتمبر / يناير", fr: "Sept. / Jan.", es: "Sept / Ene", hi: "सितंबर / जनवरी" },
-      work: { en: "Up to 964h/year", ar: "حتى 964 ساعة/سنة", fr: "Jusqu'à 964h/an", es: "Hasta 964h/año", hi: "964 घंटे/वर्ष तक" },
-      unis: ["Sorbonne Université", "Université PSL", "Sciences Po"],
-      desc: {
-        en: "Low public tuition, world-class universities and strong support for international students.",
-        ar: "رسوم عامة منخفضة، جامعات عالمية المستوى، ودعم قوي للطلاب الدوليين.",
-        fr: "Frais publics bas, universités de premier plan et fort soutien aux étudiants internationaux.",
-        es: "Matrícula pública baja, universidades de primer nivel y gran apoyo a estudiantes internacionales.",
-        hi: "कम सार्वजनिक फ़ीस, विश्वस्तरीय विश्वविद्यालय और अंतरराष्ट्रीय छात्रों के लिए मज़बूत सहयोग।",
-      },
-      notes: {
-        en: "Campus France procedure applies. A B2 French level helps for many programs.",
-        ar: "تطبق إجراءات Campus France. مستوى فرنسي B2 يساعد في كثير من البرامج.",
-        fr: "La procédure Campus France s'applique. Un niveau B2 en français aide pour de nombreux programmes.",
-        es: "Se aplica el procedimiento Campus France. Un nivel B2 de francés ayuda en muchos programas.",
-        hi: "Campus France प्रक्रिया लागू होती है। कई कार्यक्रमों के लिए B2 फ़्रेंच स्तर मददगार है।",
-      },
-    },
-    {
-      id: "germany", flag: "🇩🇪", name: "Germany",
-      region: { en: "Central Europe", ar: "وسط أوروبا", fr: "Europe centrale", es: "Europa Central", hi: "मध्य यूरोप" },
-      tuition: "€0 – €3,000", living: "€850 – €1,100",
-      proof: "≈ €11,200", langs: "Deutsch, English",
-      intake: { en: "Oct / Apr", ar: "أكتوبر / أبريل", fr: "Oct. / Avr.", es: "Oct / Abr", hi: "अक्टूबर / अप्रैल" },
-      work: { en: "120 full days/year", ar: "120 يوماً كاملاً/سنة", fr: "120 jours pleins/an", es: "120 días completos/año", hi: "120 पूर्ण दिन/वर्ष" },
-      unis: ["TU München", "LMU München", "Heidelberg University"],
-      desc: {
-        en: "Many tuition-free public universities and a strong job market after graduation.",
-        ar: "العديد من الجامعات العامة المجانية وسوق عمل قوي بعد التخرج.",
-        fr: "De nombreuses universités publiques gratuites et un marché de l'emploi solide après le diplôme.",
-        es: "Muchas universidades públicas gratuitas y un fuerte mercado laboral tras graduarse.",
-        hi: "कई निःशुल्क सार्वजनिक विश्वविद्यालय और स्नातक के बाद मज़बूत नौकरी बाज़ार।",
-      },
-      notes: {
-        en: "A blocked account is usually required as proof of funds. APS certificate may apply.",
-        ar: "يلزم عادة حساب مجمّد كإثبات للأموال. قد تنطبق شهادة APS.",
-        fr: "Un compte bloqué est généralement exigé comme preuve de fonds. Le certificat APS peut s'appliquer.",
-        es: "Suele exigirse una cuenta bloqueada como prueba de fondos. Puede aplicar el certificado APS.",
-        hi: "फ़ंड के प्रमाण के रूप में आमतौर पर ब्लॉक्ड अकाउंट आवश्यक होता है। APS प्रमाणपत्र लागू हो सकता है।",
-      },
-    },
-    {
-      id: "canada", flag: "🇨🇦", name: "Canada",
-      region: { en: "North America", ar: "أمريكا الشمالية", fr: "Amérique du Nord", es: "Norteamérica", hi: "उत्तरी अमेरिका" },
-      tuition: "$13,000 – $30,000", living: "$1,000 – $1,500",
-      proof: "≈ $20,635", langs: "English, Français",
-      intake: { en: "Sept / Jan / May", ar: "سبتمبر / يناير / مايو", fr: "Sept. / Jan. / Mai", es: "Sept / Ene / May", hi: "सितंबर / जनवरी / मई" },
-      work: { en: "Up to 24h/week", ar: "حتى 24 ساعة/أسبوع", fr: "Jusqu'à 24h/sem.", es: "Hasta 24h/semana", hi: "24 घंटे/सप्ताह तक" },
-      unis: ["University of Toronto", "McGill University", "UBC"],
-      desc: {
-        en: "Welcoming immigration policies and clear post-study work and residency pathways.",
-        ar: "سياسات هجرة مرحّبة ومسارات واضحة للعمل والإقامة بعد الدراسة.",
-        fr: "Politiques d'immigration accueillantes et voies claires de travail et de résidence après les études.",
-        es: "Políticas de inmigración acogedoras y vías claras de trabajo y residencia tras estudiar.",
-        hi: "स्वागतपूर्ण आव्रजन नीतियाँ और पढ़ाई के बाद काम व निवास के स्पष्ट रास्ते।",
-      },
-      notes: {
-        en: "A study permit and proof of funds (GIC) are required. SDS stream can speed up the visa.",
-        ar: "يلزم تصريح دراسة وإثبات أموال (GIC). قد يسرّع مسار SDS التأشيرة.",
-        fr: "Un permis d'études et une preuve de fonds (GIC) sont requis. Le volet SDS peut accélérer le visa.",
-        es: "Se requiere permiso de estudios y prueba de fondos (GIC). La vía SDS puede acelerar el visado.",
-        hi: "अध्ययन परमिट और फ़ंड का प्रमाण (GIC) आवश्यक है। SDS स्ट्रीम वीज़ा तेज़ कर सकती है।",
-      },
-    },
-    {
-      id: "usa", flag: "🇺🇸", name: "United States",
-      region: { en: "North America", ar: "أمريكا الشمالية", fr: "Amérique du Nord", es: "Norteamérica", hi: "उत्तरी अमेरिका" },
-      tuition: "$20,000 – $45,000", living: "$1,200 – $2,000",
-      proof: { en: "Varies by school", ar: "يختلف حسب الجامعة", fr: "Variable selon l'école", es: "Varía según la escuela", hi: "स्कूल के अनुसार भिन्न" },
-      langs: "English",
-      intake: { en: "Aug / Jan", ar: "أغسطس / يناير", fr: "Août / Jan.", es: "Ago / Ene", hi: "अगस्त / जनवरी" },
-      work: { en: "On-campus, then OPT", ar: "داخل الحرم ثم OPT", fr: "Sur le campus, puis OPT", es: "En el campus, luego OPT", hi: "कैंपस में, फिर OPT" },
-      unis: ["Arizona State University", "NYU", "University of Illinois"],
-      desc: {
-        en: "The widest range of programs in the world and unmatched research opportunities.",
-        ar: "أوسع مجموعة برامج في العالم وفرص بحثية لا تُضاهى.",
-        fr: "La plus grande variété de programmes au monde et des opportunités de recherche inégalées.",
-        es: "La gama de programas más amplia del mundo y oportunidades de investigación inigualables.",
-        hi: "दुनिया में कार्यक्रमों की सबसे विस्तृत श्रृंखला और बेजोड़ शोध अवसर।",
-      },
-      notes: {
-        en: "An I-20 form and F-1 visa are required, with a SEVIS fee and an embassy interview.",
-        ar: "يلزم نموذج I-20 وتأشيرة F-1 مع رسوم SEVIS ومقابلة في السفارة.",
-        fr: "Un formulaire I-20 et un visa F-1 sont requis, avec des frais SEVIS et un entretien à l'ambassade.",
-        es: "Se requiere un formulario I-20 y visa F-1, con tarifa SEVIS y entrevista en la embajada.",
-        hi: "I-20 फ़ॉर्म और F-1 वीज़ा आवश्यक है, साथ में SEVIS शुल्क और दूतावास साक्षात्कार।",
-      },
-    },
-    {
-      id: "uk", flag: "🇬🇧", name: "United Kingdom",
-      region: { en: "Western Europe", ar: "غرب أوروبا", fr: "Europe de l'Ouest", es: "Europa Occidental", hi: "पश्चिमी यूरोप" },
-      tuition: "£11,000 – £25,000", living: "£1,000 – £1,500",
-      proof: "≈ £9,200+", langs: "English",
-      intake: { en: "Sept / Jan", ar: "سبتمبر / يناير", fr: "Sept. / Jan.", es: "Sept / Ene", hi: "सितंबर / जनवरी" },
-      work: { en: "Up to 20h/week", ar: "حتى 20 ساعة/أسبوع", fr: "Jusqu'à 20h/sem.", es: "Hasta 20h/semana", hi: "20 घंटे/सप्ताह तक" },
-      unis: ["University of Manchester", "King's College London", "University of Leeds"],
-      desc: {
-        en: "Shorter degrees, globally recognised qualifications and a 2-year graduate work visa.",
-        ar: "درجات أقصر، شهادات معترف بها عالمياً، وتأشيرة عمل للخريجين لمدة سنتين.",
-        fr: "Diplômes plus courts, qualifications reconnues mondialement et visa de travail post-diplôme de 2 ans.",
-        es: "Títulos más cortos, cualificaciones reconocidas mundialmente y visado de trabajo de 2 años tras graduarse.",
-        hi: "छोटी डिग्रियाँ, वैश्विक रूप से मान्य योग्यताएँ और 2-वर्षीय ग्रेजुएट वर्क वीज़ा।",
-      },
-      notes: {
-        en: "A Student Route visa and CAS from your university are required. IELTS is often needed.",
-        ar: "تلزم تأشيرة Student Route وخطاب CAS من جامعتك. غالباً ما يُطلب IELTS.",
-        fr: "Un visa Student Route et un CAS de votre université sont requis. L'IELTS est souvent nécessaire.",
-        es: "Se requiere visado Student Route y un CAS de tu universidad. Suele necesitarse IELTS.",
-        hi: "Student Route वीज़ा और आपके विश्वविद्यालय से CAS आवश्यक है। अक्सर IELTS चाहिए।",
-      },
-    },
-    {
-      id: "italy", flag: "🇮🇹", name: "Italy",
-      region: { en: "Southern Europe", ar: "جنوب أوروبا", fr: "Europe du Sud", es: "Europa del Sur", hi: "दक्षिणी यूरोप" },
-      tuition: "€900 – €4,000", living: "€700 – €1,100",
-      proof: "≈ €6,000", langs: "Italiano, English",
-      intake: { en: "Sept / Feb", ar: "سبتمبر / فبراير", fr: "Sept. / Fév.", es: "Sept / Feb", hi: "सितंबर / फ़रवरी" },
-      work: { en: "Up to 20h/week", ar: "حتى 20 ساعة/أسبوع", fr: "Jusqu'à 20h/sem.", es: "Hasta 20h/semana", hi: "20 घंटे/सप्ताह तक" },
-      unis: ["Politecnico di Milano", "University of Bologna", "Sapienza University of Rome"],
-      desc: {
-        en: "Low public tuition, income-based fee waivers and a world leader in art, design and engineering.",
-        ar: "رسوم عامة منخفضة، وإعفاءات رسوم حسب الدخل، وريادة عالمية في الفن والتصميم والهندسة.",
-        fr: "Frais publics bas, exonérations selon les revenus et un leader mondial en art, design et ingénierie.",
-        es: "Matrícula pública baja, exenciones de tasas según ingresos y líder mundial en arte, diseño e ingeniería.",
-        hi: "कम सार्वजनिक फ़ीस, आय-आधारित शुल्क छूट, और कला, डिज़ाइन व इंजीनियरिंग में विश्व अग्रणी।",
-      },
-      notes: {
-        en: "Pre-enrolment on Universitaly and a study visa are required. DSU grants can cover fees and housing.",
-        ar: "يلزم التسجيل المسبق على Universitaly وتأشيرة دراسة. قد تغطي منح DSU الرسوم والسكن.",
-        fr: "La préinscription sur Universitaly et un visa d'études sont requis. Les bourses DSU peuvent couvrir frais et logement.",
-        es: "Se requiere preinscripción en Universitaly y visa de estudios. Las becas DSU pueden cubrir tasas y alojamiento.",
-        hi: "Universitaly पर पूर्व-नामांकन और अध्ययन वीज़ा आवश्यक है। DSU अनुदान फ़ीस और आवास कवर कर सकते हैं।",
-      },
-    },
-    {
-      id: "turkey", flag: "🇹🇷", name: "Turkey",
-      region: { en: "Eurasia", ar: "أوراسيا", fr: "Eurasie", es: "Eurasia", hi: "यूरेशिया" },
-      tuition: "$300 – $1,500", living: "$400 – $700",
-      proof: { en: "Varies by permit", ar: "يختلف حسب التصريح", fr: "Selon le permis", es: "Varía según el permiso", hi: "परमिट के अनुसार भिन्न" },
-      langs: "Türkçe, English",
-      intake: { en: "Sept / Feb", ar: "سبتمبر / فبراير", fr: "Sept. / Fév.", es: "Sept / Feb", hi: "सितंबर / फ़रवरी" },
-      work: { en: "Up to 24h/week", ar: "حتى 24 ساعة/أسبوع", fr: "Jusqu'à 24h/sem.", es: "Hasta 24h/semana", hi: "24 घंटे/सप्ताह तक" },
-      unis: ["Boğaziçi University", "Middle East Technical University", "Istanbul University"],
-      desc: {
-        en: "Affordable tuition, a rich culture bridging Europe and Asia, and growing English-taught programs.",
-        ar: "رسوم معقولة، وثقافة غنية تربط أوروبا وآسيا، وبرامج متزايدة باللغة الإنجليزية.",
-        fr: "Frais abordables, une culture riche entre l'Europe et l'Asie, et des programmes en anglais en plein essor.",
-        es: "Matrícula asequible, una cultura rica que une Europa y Asia, y programas en inglés en crecimiento.",
-        hi: "किफ़ायती फ़ीस, यूरोप और एशिया को जोड़ती समृद्ध संस्कृति, और अंग्रेज़ी में बढ़ते कार्यक्रम।",
-      },
-      notes: {
-        en: "A student residence permit is required after arrival. Some programs ask for YÖS or SAT scores.",
-        ar: "يلزم تصريح إقامة طالب بعد الوصول. تطلب بعض البرامج درجات YÖS أو SAT.",
-        fr: "Un permis de séjour étudiant est requis après l'arrivée. Certains programmes demandent le YÖS ou le SAT.",
-        es: "Se requiere un permiso de residencia estudiantil tras la llegada. Algunos programas piden YÖS o SAT.",
-        hi: "आगमन के बाद छात्र निवास परमिट आवश्यक है। कुछ कार्यक्रम YÖS या SAT स्कोर मांगते हैं।",
-      },
-    },
-    {
-      id: "malaysia", flag: "🇲🇾", name: "Malaysia",
-      region: { en: "Southeast Asia", ar: "جنوب شرق آسيا", fr: "Asie du Sud-Est", es: "Sudeste Asiático", hi: "दक्षिण-पूर्व एशिया" },
-      tuition: "$2,500 – $6,000", living: "$400 – $700",
-      proof: "≈ RM 24,000", langs: "English, Bahasa Melayu",
-      intake: { en: "Feb / Sept", ar: "فبراير / سبتمبر", fr: "Fév. / Sept.", es: "Feb / Sept", hi: "फ़रवरी / सितंबर" },
-      work: { en: "Up to 20h/week", ar: "حتى 20 ساعة/أسبوع", fr: "Jusqu'à 20h/sem.", es: "Hasta 20h/semana", hi: "20 घंटे/सप्ताह तक" },
-      unis: ["University of Malaya", "Universiti Putra Malaysia", "Monash University Malaysia"],
-      desc: {
-        en: "Low costs, English-taught degrees and branch campuses of top global universities.",
-        ar: "تكاليف منخفضة، ودرجات باللغة الإنجليزية، وفروع لأفضل الجامعات العالمية.",
-        fr: "Coûts réduits, diplômes en anglais et campus délocalisés de grandes universités mondiales.",
-        es: "Costos bajos, títulos en inglés y campus filiales de las mejores universidades del mundo.",
-        hi: "कम लागत, अंग्रेज़ी में डिग्रियाँ और शीर्ष वैश्विक विश्वविद्यालयों के शाखा परिसर।",
-      },
-      notes: {
-        en: "A student pass via EMGS is required before travel. English tests like IELTS are usually needed.",
-        ar: "يلزم تصريح طالب عبر EMGS قبل السفر. عادة ما تُطلب اختبارات اللغة الإنجليزية مثل IELTS.",
-        fr: "Un student pass via EMGS est requis avant le départ. Des tests d'anglais comme l'IELTS sont généralement nécessaires.",
-        es: "Se requiere un pase de estudiante mediante EMGS antes de viajar. Suelen exigirse pruebas de inglés como IELTS.",
-        hi: "यात्रा से पहले EMGS के माध्यम से स्टूडेंट पास आवश्यक है। आमतौर पर IELTS जैसे अंग्रेज़ी टेस्ट चाहिए।",
-      },
-    },
-  ];
+  const CURRENCY_SYMBOL = { EUR: "€", USD: "$", GBP: "£", CAD: "CA$", AUD: "A$" };
+  const UNI_PREVIEW_COUNT = 8;
+
+  function fmtMoney(amount, currency) {
+    if (amount == null) return "";
+    return (CURRENCY_SYMBOL[currency] || "") + Number(amount).toLocaleString();
+  }
+  function fmtRange(min, max, currency) {
+    if (min == null || max == null) return "";
+    return fmtMoney(min, currency) + " – " + fmtMoney(max, currency);
+  }
+
+  let DATA = [];
+
+  function loadCountries() {
+    if (!window.FIREBASE_READY) return Promise.resolve([]);
+    return window.db.collection("countries").orderBy("order").get().then((snap) => {
+      DATA = snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
+      return DATA;
+    });
+  }
 
   function t(key) { return window.I18N ? window.I18N.get(key) : key; }
 
@@ -233,13 +59,13 @@
 
   function cardHTML(c) {
     return `
-    <a href="country-details.html?c=${c.id}" class="card country-card reveal">
+    <a href="country-details.html?c=${c.id}" class="card country-card reveal in">
       <div class="top"><span class="flag">${c.flag}</span><div><h3>${c.name}</h3><span class="region">${L(c.region)}</span></div></div>
       <div class="body">
         <p>${L(c.desc)}</p>
         <div>
-          <div class="kv"><span>${t("countriesPage.tuition")}</span><b>${L(c.tuition)}</b></div>
-          <div class="kv"><span>${t("countriesPage.living")}</span><b>${L(c.living)}</b></div>
+          <div class="kv"><span>${t("countriesPage.tuition")}</span><b>${fmtRange(c.tuitionMin, c.tuitionMax, c.currency)}</b></div>
+          <div class="kv"><span>${t("countriesPage.living")}</span><b>${fmtRange(c.livingMin, c.livingMax, c.currency)}</b></div>
           <div class="kv"><span>${t("countriesPage.intake")}</span><b>${L(c.intake)}</b></div>
         </div>
         <span class="go">${t("countriesPage.cta")} ${arrowSvg()}</span>
@@ -251,9 +77,29 @@
     container.querySelectorAll(".reveal").forEach((e) => e.classList.add("in"));
   }
 
+  function scholarshipsSection(id) {
+    if (!window.FIREBASE_READY) return Promise.resolve("");
+    return window.db.collection("posts").where("type", "==", "scholarship").where("country", "==", id).get()
+      .then((snap) => {
+        if (snap.empty) return "";
+        const items = snap.docs.map((d) => d.data()).map((p) => `
+          <div class="card" style="margin-bottom:12px">
+            <div class="blog-meta"><span class="blog-date">${p.date || ""}</span></div>
+            <h4 style="font-weight:700;margin:6px 0">${p.title || ""}</h4>
+            <p class="text-dim" style="font-size:.92rem">${p.body || ""}</p>
+          </div>`).join("");
+        return `
+          <h3 style="font-size:1.3rem;font-weight:750;margin:22px 0 10px">${t("countryDetail.scholarshipsTitle")}</h3>
+          ${items}`;
+      }).catch(() => "");
+  }
+
   const Countries = {
     all: DATA,
     get(id) { return DATA.find((c) => c.id === id); },
+    L: L,
+    fmtMoney: fmtMoney,
+    fmtRange: fmtRange,
 
     renderHome(containerId, count) {
       const el = document.getElementById(containerId);
@@ -274,10 +120,38 @@
       if (!root) return;
       const params = new URLSearchParams(location.search);
       const c = this.get(params.get("c"));
-      if (!c) { root.innerHTML = `<p class="center text-dim">${t("countryDetail.notFound")}</p>`; return; }
+      if (!c) {
+        root.innerHTML = `<p class="center text-dim">${window.FIREBASE_READY === false ? t("forumPage.offline") : t("countryDetail.notFound")}</p>`;
+        return;
+      }
 
       document.title = c.name + " — " + window.SITE.brand;
-      const unis = c.unis.map((u) => `<li><span class="dot"></span>${u}</li>`).join("");
+      const uniItemHTML = (u) => `
+        <li><span class="dot"></span>
+          <div style="flex:1">
+            <div>${u.name}<span class="tag" style="margin-inline-start:8px">${t("countryDetail." + (u.type === "public" ? "publicUni" : "privateUni"))}</span></div>
+            ${u.tuitionMin != null ? `<div class="text-dim" style="font-size:.85rem;margin-top:2px">${fmtRange(u.tuitionMin, u.tuitionMax, c.currency)} / ${t("countryDetail.perYear")}</div>` : ""}
+          </div>
+        </li>`;
+      const allUnis = c.unis || [];
+      const unisPreview = allUnis.slice(0, UNI_PREVIEW_COUNT).map(uniItemHTML).join("");
+      const unisRest = allUnis.slice(UNI_PREVIEW_COUNT).map(uniItemHTML).join("");
+      const unisMore = unisRest
+        ? `<ul class="uni-list" style="display:none">${unisRest}</ul>
+           <button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="this.previousElementSibling.style.display='block';this.remove()">${t("countryDetail.showAllUnis").replace("{n}", allUnis.length)}</button>`
+        : "";
+      const steps = (c.visaSteps || []).map((s, i) =>
+        `<li><span class="dot"></span><b>${i + 1}.</b> ${L(s)}</li>`).join("");
+      const p = c.profile || {};
+      const profileRows = [
+        [t("countryDetail.capital"), p.capital],
+        [t("countryDetail.population"), p.population],
+        [t("countryDetail.currencyName"), p.currencyName],
+        [t("countryDetail.climate"), L(p.climate)],
+        [t("countryDetail.terrain"), L(p.terrain)],
+        [t("countryDetail.keyIndustries"), L(p.keyIndustries)],
+        [t("countryDetail.gdp"), L(p.gdp)],
+      ].filter((row) => row[1]);
 
       root.innerHTML = `
       <div class="container">
@@ -292,21 +166,30 @@
             <a href="assessment.html" class="btn btn-primary btn-lg mt-2" data-i18n="common.getStarted"></a>
           </div>
           <div class="card">
-            <div class="kv"><span>${t("countryDetail.tuition")}</span><b>${L(c.tuition)}</b></div>
-            <div class="kv"><span>${t("countryDetail.living")}</span><b>${L(c.living)}</b></div>
-            <div class="kv"><span>${t("countryDetail.visa")}</span><b>${L(c.proof)}</b></div>
-            <div class="kv"><span>${t("countryDetail.language")}</span><b>${L(c.langs)}</b></div>
+            <div class="kv"><span>${t("countryDetail.tuition")}</span><b>${fmtRange(c.tuitionMin, c.tuitionMax, c.currency)}</b></div>
+            <div class="kv"><span>${t("countryDetail.living")}</span><b>${fmtRange(c.livingMin, c.livingMax, c.currency)}</b></div>
+            <div class="kv"><span>${t("countryDetail.visa")}</span><b>${fmtMoney(c.proofAmount, c.currency)}</b></div>
+            <div class="kv"><span>${t("countryDetail.language")}</span><b>${c.langs || ""}</b></div>
             <div class="kv"><span>${t("countryDetail.intake")}</span><b>${L(c.intake)}</b></div>
             <div class="kv"><span>${t("countryDetail.work")}</span><b>${L(c.work)}</b></div>
           </div>
         </div>
 
+        ${profileRows.length ? `
+        <div class="card" style="margin-top:40px">
+          <h3 style="font-size:1.3rem;font-weight:750;margin-bottom:14px">${t("countryDetail.profileTitle")}</h3>
+          ${profileRows.map((row) => `<div class="kv"><span>${row[0]}</span><b style="text-align:end;max-width:65%">${row[1]}</b></div>`).join("")}
+        </div>` : ""}
+
         <div class="detail-grid" style="margin-top:40px">
           <div class="card" style="grid-column:span 2">
             <h3 style="font-size:1.3rem;font-weight:750;margin-bottom:10px">${t("countryDetail.visaNotes")}</h3>
             <p class="text-dim">${L(c.notes)}</p>
+            ${steps ? `<h3 style="font-size:1.3rem;font-weight:750;margin:22px 0 6px">${t("countryDetail.visaStepsTitle")}</h3><ul class="uni-list">${steps}</ul>` : ""}
             <h3 style="font-size:1.3rem;font-weight:750;margin:22px 0 6px">${t("countryDetail.topUnis")}</h3>
-            <ul class="uni-list">${unis}</ul>
+            <ul class="uni-list">${unisPreview}</ul>
+            ${unisMore}
+            <div id="country-scholarships"></div>
           </div>
           <div class="cta-band" style="display:flex;flex-direction:column;justify-content:center">
             <h2 style="font-size:1.5rem">${t("countryDetail.ctaTitle")}</h2>
@@ -314,11 +197,29 @@
             <a href="assessment.html" class="btn btn-primary" data-i18n="nav.startCta"></a>
           </div>
         </div>
+
+        ${L(c.afterGraduation) ? `
+        <div class="card" style="margin-top:40px">
+          <h3 style="font-size:1.3rem;font-weight:750;margin-bottom:10px">${t("countryDetail.afterGradTitle")}</h3>
+          <p class="text-dim">${L(c.afterGraduation)}</p>
+        </div>` : ""}
       </div>`;
       window.I18N.apply(root);
       reveal(root);
+
+      scholarshipsSection(c.id).then((html) => {
+        const el = document.getElementById("country-scholarships");
+        if (el) el.innerHTML = html;
+      });
     },
   };
 
   window.Countries = Countries;
+
+  window.addEventListener("components:ready", function () {
+    loadCountries().then(function () {
+      Countries.all = DATA;
+      window.dispatchEvent(new CustomEvent("countries:ready"));
+    });
+  });
 })();

@@ -70,10 +70,40 @@
   <script src="i18n/en.js"></script>
   <script src="i18n/ar.js"></script>
   <script src="i18n/fr.js"></script>
-  <script src="i18n/es.js"></script>
-  <script src="i18n/hi.js"></script>
   <script src="js/i18n.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/assessment.js"></script>
   <script src="js/components.js"></script>
+  <script>
+    /* Assessment drop-off tracking — TODO: replace localStorage with analytics when available */
+    (function () {
+      function logStep(step) {
+        var key = "assess_last_step";
+        localStorage.setItem(key, step);
+        console.log("[Assessment] Step reached:", step, new Date().toISOString());
+      }
+
+      // Hook into the assessment's step-advance event if available.
+      window.addEventListener("assessment:step", function (e) {
+        if (e.detail && e.detail.step !== undefined) logStep(e.detail.step);
+      });
+
+      // Fallback: observe DOM for the visible step number.
+      var lastSeen = 0;
+      var obs = new MutationObserver(function () {
+        var el = document.querySelector("[data-step-current]");
+        if (el) {
+          var n = parseInt(el.dataset.stepCurrent, 10);
+          if (!isNaN(n) && n !== lastSeen) { lastSeen = n; logStep(n); }
+        }
+      });
+      obs.observe(document.body, { childList: true, subtree: true, attributes: true });
+
+      window.addEventListener("beforeunload", function () {
+        var last = localStorage.getItem("assess_last_step");
+        if (last) console.log("[Assessment] Left at step:", last);
+      });
+    })();
+  </script>
 </body>
 </html>
