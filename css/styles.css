@@ -154,10 +154,11 @@ body::before {
 .brand .logo svg path { stroke: #fff !important; }
 .brand b { color: var(--navy-800); }
 
-/* Real logo — transparent PNG, sits directly on the deep-purple navbar */
-.nav-logo { display: inline-flex; align-items: center; transition: transform 0.18s var(--ease); }
+/* Real logo — transparent PNG, sits directly on the deep-purple navbar.
+   Slightly taller than the nav bar itself (overflow is visible) for more presence. */
+.nav-logo { display: inline-flex; align-items: center; margin-inline-start: 12px; transition: transform 0.18s var(--ease); }
 .nav-logo:hover { transform: translateY(-2px); }
-.nav-logo img { height: 68px; width: auto; display: block; }
+.nav-logo img { height: 104px; width: auto; display: block; }
 
 .nav-links { display: flex; align-items: center; gap: 2px; margin-inline-start: auto; }
 .nav-links a {
