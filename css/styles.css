@@ -154,6 +154,11 @@ body::before {
 .brand .logo svg path { stroke: #fff !important; }
 .brand b { color: var(--navy-800); }
 
+/* Real logo — transparent PNG, sits directly on the deep-purple navbar */
+.nav-logo { display: inline-flex; align-items: center; transition: transform 0.18s var(--ease); }
+.nav-logo:hover { transform: translateY(-2px); }
+.nav-logo img { height: 68px; width: auto; display: block; }
+
 .nav-links { display: flex; align-items: center; gap: 2px; margin-inline-start: auto; }
 .nav-links a {
   padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 1rem;
@@ -666,29 +671,6 @@ body::before {
   backdrop-filter: saturate(140%) blur(10px); -webkit-backdrop-filter: saturate(140%) blur(10px);
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
-/* ---- Typographic wordmark logo (nav) ---- */
-.brand { gap: 0; }
-.brandmark { display: inline-flex; flex-direction: column; align-items: center; line-height: 1; }
-.bm-name {
-  font-family: var(--serif); font-style: italic; font-weight: 700;
-  font-size: 1.95rem; letter-spacing: 0.5px; color: #fff; position: relative;
-  text-shadow: 0 1px 0 rgba(0,0,0,0.18);
-}
-.bm-name .bm-i { color: var(--gold); }
-.bm-nib { display: none; }
-/* gold flourish swoosh under "Prime" */
-.bm-name::after {
-  content: ""; position: absolute; left: 4%; right: 9%; bottom: -4px; height: 7px;
-  border-bottom: 2px solid var(--gold); border-radius: 0 0 60% 60% / 0 0 100% 100%; opacity: 0.85;
-}
-.bm-sub {
-  display: flex; align-items: center; gap: 8px; margin-top: 7px;
-  font-family: "Hanken Grotesk", sans-serif; font-size: 0.56rem; font-weight: 600;
-  letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); white-space: nowrap;
-}
-.bm-sub .ln { width: 16px; height: 1.5px; background: var(--gold); opacity: 0.75; border-radius: 2px; }
-@media (max-width: 480px) { .bm-name { font-size: 1.6rem; } .bm-sub { font-size: 0.5rem; letter-spacing: 0.22em; } }
-
 /* ---- Real logo, displayed clearly on a white panel in the footer ---- */
 .foot-logo {
   display: inline-block; background: #fff; border-radius: 16px; padding: 16px 24px;

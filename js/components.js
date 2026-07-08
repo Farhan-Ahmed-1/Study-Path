@@ -23,6 +23,7 @@
     facebook: "#",
     tiktok: "#",
     logo: "logo_prime.png",
+    logoLight: "logo_prime_light.png",
   };
   window.SITE = SITE;
 
@@ -48,11 +49,8 @@
   };
 
   function logoBrand() {
-    return `<a href="index.html" class="brand" aria-label="${SITE.brand}">
-      <span class="brandmark">
-        <span class="bm-name">Prim<span class="bm-i">e</span><span class="bm-nib"></span></span>
-        <span class="bm-sub"><span class="ln"></span>Education Group<span class="ln"></span></span>
-      </span>
+    return `<a href="index.html" class="brand nav-logo" aria-label="${SITE.brand}">
+      <img src="${SITE.logoLight}" alt="${SITE.brand}">
     </a>`;
   }
 
